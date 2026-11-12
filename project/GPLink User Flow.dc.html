@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-264867d7-8962-42f9-a966-e5cee0a3c187/styles.css">
+<script src="_ds/modernist-264867d7-8962-42f9-a966-e5cee0a3c187/_ds_bundle.js"></script>
+<style>
+body{margin:0;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);-webkit-font-smoothing:antialiased;text-wrap:pretty}
+a{color:var(--color-accent)}a:hover{color:var(--color-accent-600)}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="min-height:100vh;display:flex;flex-direction:column">
+<header class="nav" style="padding:14px clamp(20px,3vw,40px);gap:10px 20px;flex-wrap:wrap">
+  <span class="nav-brand" style="display:inline-flex;align-items:baseline;gap:8px;font-size:18px;letter-spacing:-.01em">GPLink <span style="color:var(--color-accent)">/</span> User flow</span>
+  <span style="font-size:13px;color:var(--color-neutral-700)">Prototype GPLink Pharmacy v3 · 14 tính năng</span>
+  <a class="btn btn-secondary" href="GPLink Pharmacy v3.dc.html" style="font-size:13px">Mở prototype<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
+</header>
+<div style="flex:1;display:flex;align-items:flex-start">
+  <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+  <aside style="flex:none;width:280px;position:sticky;top:0;max-height:100vh;overflow-y:auto;border-right:2px solid var(--color-divider);padding-bottom:24px;box-sizing:border-box">
+    <sc-for list="{{ navGroups }}" as="g" hint-placeholder-count="5">
+      <div style="padding:22px 20px 8px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--color-neutral-700)">{{ g.label }}</div>
+      <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="2">
+        <sc-if value="{{ it.on }}" hint-placeholder-val="{{ false }}"><button type="button" aria-current="page" onClick="{{ it.pick }}" style="display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px;align-items:baseline;width:100%;padding:11px 20px;border:0;border-top:1px solid var(--color-text);background:var(--color-text);color:var(--color-bg);font:inherit;font-size:14px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer"><span style="font-size:12px;font-weight:800;color:var(--color-accent-400)">{{ it.num }}</span><span>{{ it.title }}</span></button></sc-if>
+        <sc-if value="{{ it.off }}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{ it.pick }}" style="display:grid;grid-template-columns:30px minmax(0,1fr);gap:4px;align-items:baseline;width:100%;padding:11px 20px;border:0;border-top:1px solid var(--color-divider);background:transparent;color:var(--color-text);font:inherit;font-size:14px;line-height:1.3;text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)"><span style="font-size:12px;font-weight:800;color:var(--color-accent-700)">{{ it.num }}</span><span>{{ it.title }}</span></button></sc-if>
+      </sc-for>
+    </sc-for>
+  </aside>
+  </sc-if>
+  <main ref="{{ mainRef }}" style="flex:1;min-width:0;padding:32px clamp(20px,3vw,40px) 96px">
+    <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+      <div class="field" style="margin-bottom:28px"><label for="uf-pick">Chọn tính năng</label><select id="uf-pick" class="input" value="{{ sel }}" onChange="{{ onSelect }}"><sc-for list="{{ allItems }}" as="o" hint-placeholder-count="15"><option value="{{ o.id }}">{{ o.num }} · {{ o.title }}</option></sc-for></select></div>
+    </sc-if>
+
+    <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+    <div data-screen-label="Tổng quan" style="display:flex;flex-direction:column;gap:48px;max-width:1120px">
+      <section style="display:flex;flex-direction:column;gap:16px;padding-bottom:32px;border-bottom:2px solid var(--color-text)">
+        <span style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--color-accent-700)">00 · Tổng quan</span>
+        <h1 style="font-size:clamp(36px,5vw,60px);line-height:1;letter-spacing:-.03em;margin:0;max-width:15ch">Mỗi tính năng của GPLink, từ cú bấm đầu tiên đến kết quả.</h1>
+        <p style="font-size:17px;line-height:1.55;max-width:62ch;margin:0;color:var(--color-neutral-800)">GPLink là nơi tổng hợp các nhà thuốc bán lẻ: mỗi nhà thuốc tự đặt giá và tồn kho. Khách mua theo hai cách — chọn thuốc rồi so sánh nhà thuốc (<a href="#" onClick="{{ goSearch }}">01</a>), hoặc chọn nhà thuốc rồi mua trong cửa hàng của nhà thuốc đó (<a href="#" onClick="{{ goPharmacy }}">02</a>). Giỏ hàng gom được nhiều nhà thuốc; mỗi nhà thuốc thành một đơn riêng nhưng chỉ thanh toán một lần. Đi kèm là vị trí giao hàng, thông báo, chat hỗ trợ, hỏi dược sĩ ngay trên trang sản phẩm và tư vấn bác sĩ qua FEV3R. Chọn một tính năng để xem trọn luồng.</p>
+      </section>
+      <section style="display:flex;flex-direction:column;gap:14px">
+        <h2 style="font-size:22px;margin:0">Hai cách mua, chung một giỏ hàng</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));border-top:2px solid var(--color-text)">
+          <sc-for list="{{ journey }}" as="j" hint-placeholder-count="4">
+            <button type="button" onClick="{{ j.pick }}" style="display:flex;flex-direction:column;gap:8px;padding:18px 18px 20px 0;background:transparent;border:0;border-bottom:1px solid var(--color-divider);font:inherit;color:inherit;text-align:left;cursor:pointer" style-hover="color:var(--color-accent)">
+              <span style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--color-accent)"><span>{{ j.num }}</span><span>{{ j.arrow }}</span></span>
+              <strong style="font-size:18px;line-height:1.2">{{ j.title }}</strong>
+              <span style="font-size:13px;line-height:1.5;color:var(--color-neutral-800)">{{ j.cap }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </section>
+      <section style="display:flex;flex-direction:column;gap:14px">
+        <h2 style="font-size:22px;margin:0">Tất cả tính năng</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));border-top:2px solid var(--color-text)">
+          <sc-for list="{{ cards }}" as="c" hint-placeholder-count="14">
+            <button type="button" onClick="{{ c.pick }}" style="display:flex;flex-direction:column;gap:8px;padding:18px 18px 20px;min-height:200px;background:transparent;border:0;border-right:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);font:inherit;color:inherit;text-align:left;cursor:pointer" style-hover="background:var(--color-neutral-200)">
+              <span style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--color-neutral-700)"><span style="color:var(--color-accent);font-weight:800;font-size:13px;letter-spacing:0">{{ c.num }}</span><span>{{ c.group }}</span></span>
+              <strong style="font-size:19px;line-height:1.2;letter-spacing:-.01em">{{ c.title }}</strong>
+              <span style="flex:1;font-size:13px;line-height:1.5;color:var(--color-neutral-800)">{{ c.goal }}</span>
+              <span style="font-size:12px;color:var(--color-neutral-700);padding-top:10px;border-top:1px solid var(--color-divider);align-self:stretch">{{ c.meta }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </section>
+      <section style="display:flex;flex-direction:column;gap:14px">
+        <h2 style="font-size:22px;margin:0">Cách đọc sơ đồ</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));column-gap:28px;border-top:2px solid var(--color-text)">
+          <div style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;align-items:start;padding:14px 0;border-bottom:1px solid var(--color-divider)"><span style="height:28px;background:var(--color-text)"></span><div><strong style="display:block;font-size:14px">Bắt đầu</strong><span style="font-size:13px;line-height:1.45;color:var(--color-neutral-800)">Điểm khách bước vào luồng.</span></div></div>
+          <div style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;align-items:start;padding:14px 0;border-bottom:1px solid var(--color-divider)"><span style="height:28px;background:var(--color-neutral-100);border:2px solid var(--color-text);box-sizing:border-box"></span><div><strong style="display:block;font-size:14px">Màn hình</strong><span style="font-size:13px;line-height:1.45;color:var(--color-neutral-800)">Một trang hoặc hộp thoại khách nhìn thấy.</span></div></div>
+          <div style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;align-items:start;padding:14px 0;border-bottom:1px solid var(--color-divider)"><span style="height:28px;border:1px solid var(--color-neutral-600);box-sizing:border-box"></span><div><strong style="display:block;font-size:14px">Thao tác</strong><span style="font-size:13px;line-height:1.45;color:var(--color-neutral-800)">Việc khách làm trên màn hình: gõ, chọn, bấm.</span></div></div>
+          <div style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;align-items:start;padding:14px 0;border-bottom:1px solid var(--color-divider)"><span style="height:28px;border:1.5px dashed var(--color-text);box-sizing:border-box"></span><div><strong style="display:block;font-size:14px">Hệ thống / đối tác</strong><span style="font-size:13px;line-height:1.45;color:var(--color-neutral-800)">Việc tự động, hoặc do nhà thuốc, dược sĩ, cổng thanh toán xử lý.</span></div></div>
+          <div style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;align-items:start;padding:14px 0;border-bottom:1px solid var(--color-divider)"><span style="height:28px;background:var(--color-text);clip-path:polygon(9px 0,calc(100% - 9px) 0,100% 50%,calc(100% - 9px) 100%,9px 100%,0 50%)"></span><div><strong style="display:block;font-size:14px">Kiểm tra</strong><span style="font-size:13px;line-height:1.45;color:var(--color-neutral-800)">Điểm rẽ nhánh; nhãn trên mũi tên cho biết điều kiện.</span></div></div>
+          <div style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;align-items:start;padding:14px 0;border-bottom:1px solid var(--color-divider)"><span style="height:28px;background:var(--color-accent)"></span><div><strong style="display:block;font-size:14px">Kết quả</strong><span style="font-size:13px;line-height:1.45;color:var(--color-neutral-800)">Kết thúc thành công của luồng.</span></div></div>
+          <div style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;align-items:start;padding:14px 0;border-bottom:1px solid var(--color-divider)"><span style="height:28px;background:var(--color-accent-100);border:1.5px dashed var(--color-accent);box-sizing:border-box"></span><div><strong style="display:block;font-size:14px">Lỗi</strong><span style="font-size:13px;line-height:1.45;color:var(--color-neutral-800)">Trạng thái lỗi khách thấy, thường có đường quay lại.</span></div></div>
+          <div style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;align-items:start;padding:14px 0;border-bottom:1px solid var(--color-divider)"><span style="height:28px;border:2px solid var(--color-accent);box-sizing:border-box"></span><div><strong style="display:block;font-size:14px">Dừng / quay lại</strong><span style="font-size:13px;line-height:1.45;color:var(--color-neutral-800)">Kết thúc không thành công, hoặc trở về bước trước.</span></div></div>
+          <div style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;align-items:start;padding:14px 0;border-bottom:1px solid var(--color-divider)"><span style="height:28px;border:2px solid var(--color-text);box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;padding-right:5px;font-size:13px;font-weight:800">→</span><div><strong style="display:block;font-size:14px">Sang luồng khác</strong><span style="font-size:13px;line-height:1.45;color:var(--color-neutral-800)">Bấm vào để mở luồng liên quan.</span></div></div>
+          <div style="display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;align-items:start;padding:14px 0;border-bottom:1px solid var(--color-divider)"><svg width="44" height="28" viewBox="0 0 44 28"><line x1="0" y1="4" x2="44" y2="4" style="stroke:var(--color-text);stroke-width:2"></line><line x1="0" y1="11" x2="44" y2="11" style="stroke:var(--color-neutral-700);stroke-width:1.5"></line><line x1="0" y1="18" x2="44" y2="18" style="stroke:var(--color-accent);stroke-width:1.5;stroke-dasharray:6 4"></line><line x1="0" y1="25" x2="44" y2="25" style="stroke:var(--color-neutral-700);stroke-width:1.5;stroke-dasharray:2 4"></line></svg><div><strong style="display:block;font-size:14px">Mũi tên</strong><span style="font-size:13px;line-height:1.45;color:var(--color-neutral-800)">Đậm: luồng chính · mảnh: nhánh rẽ · đỏ nét đứt: lỗi · chấm: quay lại / thử lại.</span></div></div>
+        </div>
+      </section>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isFlow }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Luồng tính năng" style="display:flex;flex-direction:column;gap:40px">
+      <section style="display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--color-accent-700)">Tính năng {{ fNum }} / {{ fTotal }} · {{ fGroup }}</span>
+        <h1 style="font-size:clamp(32px,4.2vw,50px);line-height:1.02;letter-spacing:-.03em;margin:0">{{ fTitle }}</h1>
+        <p style="font-size:17px;line-height:1.55;max-width:64ch;margin:0;color:var(--color-neutral-800)">{{ fGoal }}</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));column-gap:28px;border-top:2px solid var(--color-text);border-bottom:1px solid var(--color-divider);margin-top:12px">
+          <div style="display:flex;flex-direction:column;gap:6px;padding:14px 0 16px"><span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--color-neutral-700)">Bắt đầu từ</span><span style="font-size:14px;line-height:1.5">{{ fEntry }}</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;padding:14px 0 16px"><span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--color-neutral-700)">Kết thúc khi</span><span style="font-size:14px;line-height:1.5">{{ fOutcome }}</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;padding:14px 0 16px"><span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--color-neutral-700)">Màn hình liên quan</span><span style="font-size:14px;line-height:1.5">{{ fScreens }}</span></div>
+        </div>
+      </section>
+
+      <section style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px 20px;flex-wrap:wrap">
+          <h2 style="font-size:24px;margin:0">Sơ đồ luồng</h2>
+          <span style="font-size:13px;color:var(--color-neutral-700)">{{ countLabel }} · đọc từ trên xuống · rê chuột vào một ô để làm nổi đường đi</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12px;color:var(--color-neutral-800)">
+          <span style="display:inline-flex;align-items:center;gap:7px"><span style="flex:none;width:20px;height:13px;background:var(--color-text)"></span>Bắt đầu</span>
+          <span style="display:inline-flex;align-items:center;gap:7px"><span style="flex:none;width:20px;height:13px;background:var(--color-neutral-100);border:2px solid var(--color-text);box-sizing:border-box"></span>Màn hình</span>
+          <span style="display:inline-flex;align-items:center;gap:7px"><span style="flex:none;width:20px;height:13px;border:1px solid var(--color-neutral-600);box-sizing:border-box"></span>Thao tác</span>
+          <span style="display:inline-flex;align-items:center;gap:7px"><span style="flex:none;width:20px;height:13px;border:1.5px dashed var(--color-text);box-sizing:border-box"></span>Hệ thống / đối tác</span>
+          <span style="display:inline-flex;align-items:center;gap:7px"><span style="flex:none;width:22px;height:13px;background:var(--color-text);clip-path:polygon(5px 0,calc(100% - 5px) 0,100% 50%,calc(100% - 5px) 100%,5px 100%,0 50%)"></span>Kiểm tra</span>
+          <span style="display:inline-flex;align-items:center;gap:7px"><span style="flex:none;width:20px;height:13px;background:var(--color-accent)"></span>Kết quả</span>
+          <span style="display:inline-flex;align-items:center;gap:7px"><span style="flex:none;width:20px;height:13px;background:var(--color-accent-100);border:1.5px dashed var(--color-accent);box-sizing:border-box"></span>Lỗi</span>
+          <span style="display:inline-flex;align-items:center;gap:7px"><span style="flex:none;width:20px;height:13px;border:2px solid var(--color-accent);box-sizing:border-box"></span>Dừng / quay lại</span>
+          <span style="display:inline-flex;align-items:center;gap:7px"><span style="flex:none;width:20px;height:13px;border:2px solid var(--color-text);box-sizing:border-box"></span>Sang luồng khác (bấm được)</span>
+          <span style="display:inline-flex;align-items:center;gap:7px"><svg width="26" height="10" style="flex:none"><line x1="0" y1="5" x2="26" y2="5" style="stroke:var(--color-text);stroke-width:2"></line></svg>Luồng chính</span>
+          <span style="display:inline-flex;align-items:center;gap:7px"><svg width="26" height="10" style="flex:none"><line x1="0" y1="5" x2="26" y2="5" style="stroke:var(--color-neutral-700);stroke-width:1.5"></line></svg>Nhánh rẽ</span>
+          <span style="display:inline-flex;align-items:center;gap:7px"><svg width="26" height="10" style="flex:none"><line x1="0" y1="5" x2="26" y2="5" style="stroke:var(--color-accent);stroke-width:1.5;stroke-dasharray:6 4"></line></svg>Lỗi</span>
+          <span style="display:inline-flex;align-items:center;gap:7px"><svg width="26" height="10" style="flex:none"><line x1="0" y1="5" x2="26" y2="5" style="stroke:var(--color-neutral-700);stroke-width:1.5;stroke-dasharray:2 4"></line></svg>Quay lại / thử lại</span>
+        </div>
+        <sc-if value="{{ dScaled }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:var(--color-neutral-700)">Sơ đồ đang thu nhỏ cho vừa khung — mở rộng cửa sổ để xem cỡ chữ đầy đủ.</span></sc-if>
+        <div style="overflow-x:auto;border-top:2px solid var(--color-text);border-bottom:2px solid var(--color-text)">
+          <div style="position:relative;width:{{ dSW }}px;height:{{ dSH }}px;overflow:hidden">
+          <div style="position:absolute;left:0;top:0;width:{{ dW }}px;height:{{ dH }}px;transform:scale({{ dK }});transform-origin:0 0">
+            <span style="position:absolute;left:0;top:0;height:42px;display:flex;align-items:center;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--color-neutral-700)">Giai đoạn</span>
+            <sc-for list="{{ lanes }}" as="ln" hint-placeholder-count="3">
+              <div style="position:absolute;top:0;left:{{ ln.x }}px;width:{{ ln.w }}px;height:{{ ln.h }}px;border-left:1px solid var(--color-divider);background:{{ ln.bg }};box-sizing:border-box"><div style="height:42px;display:flex;align-items:center;padding:0 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:{{ ln.fg }}">{{ ln.label }}</div></div>
+            </sc-for>
+            <div style="position:absolute;left:0;top:42px;width:{{ dW }}px;height:2px;background:var(--color-text)"></div>
+            <sc-for list="{{ phases }}" as="ph" hint-placeholder-count="3">
+              <div style="position:absolute;left:0;top:{{ ph.y }}px;width:{{ ph.w }}px;border-top:{{ ph.rule }}"></div>
+              <div style="position:absolute;left:0;top:{{ ph.y }}px;width:{{ ph.gw }}px;padding-top:12px;display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;font-weight:800;color:var(--color-accent)">{{ ph.num }}</span><span style="font-size:13px;font-weight:700;line-height:1.25">{{ ph.label }}</span></div>
+            </sc-for>
+            {{ edgesSvg }}
+            <sc-for list="{{ nodes }}" as="n" hint-placeholder-count="8">
+              <sc-if value="{{ n.isBox }}" hint-placeholder-val="{{ true }}">
+                <div onMouseEnter="{{ n.enter }}" onMouseLeave="{{ clearHl }}" onClick="{{ n.go }}" style="position:absolute;left:{{ n.x }}px;top:{{ n.y }}px;width:{{ n.w }}px;height:{{ n.h }}px;box-sizing:border-box;padding:9px 11px;display:flex;flex-direction:column;gap:4px;overflow:hidden;background:{{ n.bg }};border:{{ n.bd }};color:{{ n.fg }};cursor:{{ n.cur }}">
+                  <span style="display:flex;gap:6px;font-size:10px;line-height:1.2;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:{{ n.kc }};white-space:nowrap;overflow:hidden"><span style="font-weight:800">{{ n.num }}</span><span style="overflow:hidden;text-overflow:ellipsis">{{ n.kicker }}</span></span>
+                  <span style="font-size:13px;line-height:1.25;font-weight:700">{{ n.title }}</span>
+                </div>
+              </sc-if>
+              <sc-if value="{{ n.isDec }}" hint-placeholder-val="{{ false }}">
+                <div onMouseEnter="{{ n.enter }}" onMouseLeave="{{ clearHl }}" style="position:absolute;left:{{ n.x }}px;top:{{ n.y }}px;width:{{ n.w }}px;height:{{ n.h }}px">
+                  <div style="position:absolute;inset:0;background:var(--color-text);clip-path:polygon(18px 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,18px 100%,0 50%)"></div>
+                  <div style="position:absolute;inset:2px;background:var(--color-neutral-100);clip-path:polygon(17px 0,calc(100% - 17px) 0,100% 50%,calc(100% - 17px) 100%,17px 100%,0 50%)"></div>
+                  <div style="position:relative;height:100%;box-sizing:border-box;padding:0 24px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;text-align:center">
+                    <span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:var(--color-accent-700)">{{ n.num }} · Kiểm tra</span>
+                    <span style="font-size:13px;line-height:1.25;font-weight:700">{{ n.title }}</span>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ n.isGo }}" hint-placeholder-val="{{ false }}">
+                <button type="button" onClick="{{ n.go }}" onMouseEnter="{{ n.enter }}" onMouseLeave="{{ clearHl }}" style="position:absolute;left:{{ n.x }}px;top:{{ n.y }}px;width:{{ n.w }}px;height:{{ n.h }}px;box-sizing:border-box;padding:9px 11px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;overflow:hidden;background:var(--color-bg);border:2px solid var(--color-text);color:var(--color-text);font:inherit;text-align:left;cursor:pointer" style-hover="background:var(--color-text);color:var(--color-bg)">
+                  <span style="display:flex;gap:6px;font-size:10px;line-height:1.2;letter-spacing:.08em;text-transform:uppercase;font-weight:600;white-space:nowrap"><span style="font-weight:800">{{ n.num }}</span><span>{{ n.kicker }} →</span></span>
+                  <span style="font-size:13px;line-height:1.25;font-weight:700">{{ n.title }}</span>
+                </button>
+              </sc-if>
+              <sc-if value="{{ n.hl }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:{{ n.hx }}px;top:{{ n.hy }}px;width:{{ n.hw }}px;height:{{ n.hh }}px;border:2px solid var(--color-accent);box-sizing:border-box;pointer-events:none"></div></sc-if>
+            </sc-for>
+            <sc-for list="{{ labels }}" as="lb" hint-placeholder-count="6"><span style="position:absolute;left:{{ lb.x }}px;top:{{ lb.y }}px;transform:translate(-50%,-50%);padding:1px 6px;background:var(--color-bg);border:1px solid {{ lb.bd }};font-size:11px;line-height:1.35;font-weight:600;color:{{ lb.fg }};white-space:nowrap;opacity:{{ lb.op }};pointer-events:none">{{ lb.text }}</span></sc-for>
+          </div>
+          </div>
+        </div>
+      </section>
+
+      <section style="display:flex;flex-direction:column;gap:14px">
+        <h2 style="font-size:24px;margin:0">Diễn giải từng bước</h2>
+        <div style="border-top:2px solid var(--color-text)">
+          <sc-for list="{{ steps }}" as="s" hint-placeholder-count="8">
+            <div onMouseEnter="{{ s.enter }}" onMouseLeave="{{ clearHl }}" style="display:grid;grid-template-columns:56px minmax(0,1fr);column-gap:12px;padding:16px 0;border-bottom:1px solid var(--color-divider);background:{{ s.bg }}">
+              <span style="font-family:var(--font-heading);font-weight:800;font-size:22px;line-height:1;color:var(--color-accent);padding-left:6px">{{ s.num }}</span>
+              <div style="display:flex;flex-wrap:wrap;gap:8px 28px;min-width:0">
+                <div style="flex:1 1 220px;min-width:0;display:flex;flex-direction:column;gap:6px;align-items:flex-start"><span class="tag tag-neutral" style="text-transform:uppercase;letter-spacing:.08em;font-size:10px;font-weight:600">{{ s.kicker }}</span><strong style="font-size:16px;line-height:1.3">{{ s.title }}</strong></div>
+                <div style="flex:2 1 320px;min-width:0;display:flex;flex-direction:column;gap:10px;align-items:flex-start"><p style="margin:0;font-size:14px;line-height:1.6;color:var(--color-neutral-800)">{{ s.d }}</p><sc-if value="{{ s.hasGo }}" hint-placeholder-val="{{ false }}"><button type="button" class="btn btn-secondary" onClick="{{ s.go }}" style="font-size:13px">{{ s.goLabel }}</button></sc-if></div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <sc-if value="{{ hasBranches }}" hint-placeholder-val="{{ true }}">
+      <section style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px 20px;flex-wrap:wrap"><h2 style="font-size:24px;margin:0">Nhánh rẽ &amp; ngoại lệ</h2><span style="font-size:13px;color:var(--color-neutral-700)">Ký hiệu chữ cái khớp với các ô ngoài luồng chính trên sơ đồ</span></div>
+        <div style="border-top:2px solid var(--color-text)">
+          <sc-for list="{{ branches }}" as="s" hint-placeholder-count="4">
+            <div onMouseEnter="{{ s.enter }}" onMouseLeave="{{ clearHl }}" style="display:grid;grid-template-columns:56px minmax(0,1fr);column-gap:12px;padding:16px 0;border-bottom:1px solid var(--color-divider);background:{{ s.bg }}">
+              <span style="font-family:var(--font-heading);font-weight:800;font-size:22px;line-height:1;color:var(--color-text);padding-left:6px">{{ s.num }}</span>
+              <div style="display:flex;flex-wrap:wrap;gap:8px 28px;min-width:0">
+                <div style="flex:1 1 220px;min-width:0;display:flex;flex-direction:column;gap:6px;align-items:flex-start"><span class="tag tag-neutral" style="text-transform:uppercase;letter-spacing:.08em;font-size:10px;font-weight:600">{{ s.kicker }}</span><strong style="font-size:16px;line-height:1.3">{{ s.title }}</strong></div>
+                <div style="flex:2 1 320px;min-width:0;display:flex;flex-direction:column;gap:10px;align-items:flex-start"><p style="margin:0;font-size:14px;line-height:1.6;color:var(--color-neutral-800)">{{ s.d }}</p><sc-if value="{{ s.hasGo }}" hint-placeholder-val="{{ false }}"><button type="button" class="btn btn-secondary" onClick="{{ s.go }}" style="font-size:13px">{{ s.goLabel }}</button></sc-if></div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+      </sc-if>
+
+      <sc-if value="{{ showTipsBlock }}" hint-placeholder-val="{{ true }}">
+      <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));column-gap:28px;border-top:2px solid var(--color-text);border-bottom:1px solid var(--color-divider)">
+        <div style="padding:16px 0 18px"><h2 style="font-size:20px;margin:0 0 6px">Thử trên prototype</h2><p style="margin:0;font-size:13px;line-height:1.5;color:var(--color-neutral-700)">Dữ liệu mẫu để đi hết các nhánh.</p></div>
+        <sc-for list="{{ tips }}" as="tp" hint-placeholder-count="3"><div style="padding:16px 0 18px;display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;font-weight:800;color:var(--color-accent)">{{ tp.num }}</span><p style="margin:0;font-size:14px;line-height:1.55">{{ tp.text }}</p></div></sc-for>
+      </section>
+      </sc-if>
+
+      <nav style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));column-gap:28px;border-top:2px solid var(--color-text)">
+        <button type="button" onClick="{{ goPrev }}" style="display:flex;flex-direction:column;gap:4px;padding:16px 0;border:0;background:transparent;font:inherit;color:inherit;text-align:left;cursor:pointer" style-hover="color:var(--color-accent)"><span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--color-neutral-700)">← Trước</span><strong style="font-size:16px">{{ prevLabel }}</strong></button>
+        <sc-if value="{{ hasNext }}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{ goNext }}" style="display:flex;flex-direction:column;gap:4px;padding:16px 0;border:0;background:transparent;font:inherit;color:inherit;text-align:left;cursor:pointer" style-hover="color:var(--color-accent)"><span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--color-neutral-700)">Tiếp theo →</span><strong style="font-size:16px">{{ nextLabel }}</strong></button></sc-if>
+      </nav>
+    </div>
+    </sc-if>
+  </main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;startFlow&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;overview&quot;,&quot;options&quot;:[&quot;overview&quot;,&quot;search&quot;,&quot;pharmacy&quot;,&quot;location&quot;,&quot;checkout&quot;,&quot;tracking&quot;,&quot;lookup&quot;,&quot;signin&quot;,&quot;signup&quot;,&quot;account&quot;,&quot;notify&quot;,&quot;qa&quot;,&quot;chat&quot;,&quot;doctor&quot;,&quot;library&quot;],&quot;tsType&quot;:&quot;string&quot;},&quot;showTips&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;dimOnHover&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const HEAD = 44, RH = 136, NH = 80, GUT = 112;
+const N = (id, l, r, t, n, d, o) => Object.assign({id, l, r, t, n, d}, o || {});
+const E = (a, b, ro, lb, o) => Object.assign({a, b, ro, lb}, o || {});
+const L3 = b => [{n:'Luồng chính'}, {n:b || 'Nhánh rẽ'}, {n:'Ngoại lệ & lỗi', x:true}];
+const GROUPS = [{k:'shop', n:'Mua hàng'}, {k:'acct', n:'Tài khoản'}, {k:'help', n:'Hỗ trợ & tư vấn'}, {k:'content', n:'Nội dung'}];
+const TY = {
+  start:{k:'Bắt đầu', bg:'var(--color-text)', fg:'var(--color-bg)', bd:'2px solid var(--color-text)', kc:'var(--color-neutral-400)'},
+  screen:{k:'Màn hình', bg:'var(--color-neutral-100)', fg:'var(--color-text)', bd:'2px solid var(--color-text)', kc:'var(--color-accent-700)'},
+  step:{k:'Thao tác', bg:'var(--color-bg)', fg:'var(--color-text)', bd:'1px solid var(--color-neutral-600)', kc:'var(--color-neutral-700)'},
+  system:{k:'Hệ thống', bg:'var(--color-bg)', fg:'var(--color-text)', bd:'1.5px dashed var(--color-text)', kc:'var(--color-neutral-700)'},
+  decision:{k:'Kiểm tra'},
+  end:{k:'Kết quả', bg:'var(--color-accent)', fg:'var(--color-bg)', bd:'2px solid var(--color-accent)', kc:'var(--color-accent-100)'},
+  stop:{k:'Dừng', bg:'var(--color-bg)', fg:'var(--color-accent-700)', bd:'2px solid var(--color-accent)', kc:'var(--color-accent-700)'},
+  error:{k:'Lỗi', bg:'var(--color-accent-100)', fg:'var(--color-accent-800)', bd:'1.5px dashed var(--color-accent)', kc:'var(--color-accent-700)'},
+  goto:{k:'Sang luồng'}
+};
+const ES = {
+  main:{c:'var(--color-text)', w:2, d:null, lc:'var(--color-text)'},
+  branch:{c:'var(--color-neutral-700)', w:1.5, d:null, lc:'var(--color-neutral-800)'},
+  error:{c:'var(--color-accent)', w:1.5, d:'6 4', lc:'var(--color-accent-700)'},
+  back:{c:'var(--color-neutral-700)', w:1.5, d:'2 4', lc:'var(--color-neutral-800)'}
+};
+
+const FLOWS = [
+{id:'search', g:'shop', title:'Mua theo thuốc',
+ goal:'Khách tìm một loại thuốc, xem giá và tồn kho ở mọi nhà thuốc đang bán, rồi tự chọn mua từ nhà thuốc phù hợp — rẻ nhất, gần nhất hoặc giao nhanh nhất.',
+ entry:'Ô tìm kiếm, nút “Shop by medicine” ở trang chủ, menu Categories, menu Products, “Popular searches”, “Popular near you”, thông báo giảm giá.',
+ outcome:'Sản phẩm vào giỏ, gắn với nhà thuốc khách đã chọn.',
+ screens:'Trang chủ · Hộp gợi ý · Menu Categories · Catalogue (bộ lọc, phân trang) · Chi tiết sản phẩm (bảng so sánh nhà thuốc)',
+ lanes:L3('Lối vào khác'), phases:[[0,3,'Tìm thuốc'],[4,6,'Danh sách & bộ lọc'],[7,9,'So sánh & chọn nhà thuốc'],[10,11,'Thêm vào giỏ']],
+ nodes:[
+  N('s1',0,0,'start','Trang chủ','GPLink tổng hợp các nhà thuốc bán lẻ; mỗi nhà thuốc tự đặt giá và tồn kho. Đặt vị trí giao hàng (luồng 03) để so sánh theo khoảng cách và thời gian giao.'),
+  N('s2',0,1,'step','Gõ tên thuốc vào ô tìm kiếm','Gõ từ 2 ký tự trở lên, hộp gợi ý tự mở ngay dưới ô tìm kiếm.'),
+  N('s3',0,2,'decision','Có gợi ý phù hợp?','So khớp với từ khóa phổ biến (EN/BM), tên sản phẩm, hoạt chất, hãng sản xuất và danh mục.'),
+  N('s4',0,3,'screen','Hộp gợi ý','Tối đa 4 từ khóa và 4 sản phẩm (“Products · lowest price near you”); mỗi sản phẩm hiện giá thấp nhất gần bạn và số nhà thuốc còn hàng. Dòng cuối: “See all results for …”.'),
+  N('s5',0,4,'screen','Catalogue','Tiêu đề “Results for …”, tên danh mục hoặc “All products”; hàng danh mục cuộn ngang ở trên, phân trang ở cuối. Mỗi thẻ hiện “From RM …” (giá thấp nhất gần bạn) và “At N pharmacies”. Gợi ý “Prefer to buy everything from one pharmacy? Browse pharmacies” mở luồng 02.'),
+  N('s6',0,5,'step','Lọc & sắp xếp','Bộ lọc bên trái: Price, Brand, Country of origin, Pharmacy (nhà thuốc đóng cửa không chọn được). Mỗi bộ lọc đang bật thành một chip — bấm để bỏ, “Clear all” bỏ hết. Sắp xếp: Relevance, Lowest price, Highest price.'),
+  N('s7',0,6,'decision','Có sản phẩm khớp?','Kết quả phụ thuộc từ khóa, danh mục và bộ lọc.'),
+  N('s8',0,7,'screen','Chi tiết sản phẩm','Giá, tồn kho và cách giao nhận của nhà thuốc đang được chọn (“At … · Delivery ~N min · x km”). Mặc định chọn sẵn nhà thuốc giá tốt nhất trong bán kính 10 km.'),
+  N('s9',0,8,'step','So sánh N nhà thuốc','Bảng “Compare N pharmacies”: giá, tồn kho, khoảng cách, giao ~N phút hoặc “Pickup only”. Sắp xếp “Lowest price” / “Nearest”; nhãn “Best price”, “Nearest”.'),
+  N('s10',0,9,'step','Chọn nhà thuốc','Bấm một dòng để chọn; giá và nút mua phía trên đổi theo. Nhà thuốc đóng cửa hoặc hết hàng bị làm mờ, không chọn được. Món từ các nhà thuốc khác nhau thành các đơn riêng.'),
+  N('s11',0,10,'decision','Thuốc kê toa (Rx)?','Thuốc kê toa không có nút “Add to cart” — chỉ bán tại quầy khi có toa của bác sĩ.'),
+  N('s12',0,11,'end','Thêm vào giỏ','Chọn số lượng (tối đa theo tồn kho của nhà thuốc đó, không quá 10) rồi “Add to cart”. Thông báo “… added · from <nhà thuốc>”.',{go:'checkout'}),
+  N('b1',1,3,'start','Menu & gợi ý nhanh','Menu Categories (danh mục → nhóm con), “Shop by medicine”, “Popular searches”, menu Products, “View all” ở “Popular near you” và “More from <hãng>” — mở thẳng Catalogue đã lọc sẵn.',{k:'Lối vào khác'}),
+  N('x1',2,2,'error','Chưa có gợi ý','Hộp gợi ý báo “No matches yet — keep typing or search the full catalogue.” Khách gõ tiếp, hoặc bấm Search để tìm trong toàn bộ catalogue.'),
+  N('x2',2,6,'error','Không có sản phẩm','“No products match. Try another word or clear the filters.” Bấm “Clear filters” để bỏ hết bộ lọc.'),
+  N('g3',1,7,'goto','Thông tin & hỏi dược sĩ','Phía dưới trang: thông tin sản phẩm, FAQ, đánh giá và hỏi đáp với dược sĩ.',{go:'qa'}),
+  N('x3',2,8,'stop','Không nhà thuốc nào còn hàng','Bảng báo “Not in stock at any pharmacy”; nút “Add to cart” bị khóa.'),
+  N('g1',1,9,'goto','Vào cửa hàng nhà thuốc','“Visit store” trên một dòng của bảng so sánh → mua tiếp trong cửa hàng của nhà thuốc đó.',{go:'pharmacy'}),
+  N('x4',1,10,'stop','Chỉ bán tại quầy','Thuốc kê toa không bán online. Bảng so sánh cho biết nhà thuốc nào còn hàng; “Directions to …” mở chỉ đường để khách mang toa đến quầy.')],
+ main:['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11','s12'],
+ edges:[E('s1','s2','main'),E('s2','s3','main'),E('s3','s4','main','Có'),E('s3','x1','error','Không'),E('s4','s5','main','Chọn từ khóa'),
+  E('s4','s8','branch','Bấm sản phẩm',{fs:'l',ts:'l',x:'L',ls:1,lt:0.375}),E('b1','s5','branch',null,{fs:'b',ts:'r',bo:-12}),E('x1','s5','branch','Bấm Search',{fs:'b',ts:'r',bo:12,ls:0}),
+  E('s5','s6','main'),E('s6','s7','main'),E('s7','s8','main','Có'),E('s7','x2','error','Không'),E('x2','s6','back','Clear filters',{fs:'t',ts:'r'}),E('s8','g3','branch'),E('s8','s9','main'),
+  E('s9','x3','error','Hết hàng ở mọi nơi'),E('s9','s10','main'),E('s10','g1','branch','Visit store'),E('s10','s11','main'),E('s11','x4','branch','Có (Rx)'),E('s11','s12','main','Không')],
+ tips:['Gõ “para”, “vita” hoặc “thermo” để thấy hộp gợi ý với giá thấp nhất gần bạn.','Mở Paracetamol 500mg rồi bấm “Nearest” trong bảng so sánh để đổi cách sắp xếp.','Trong Catalogue, bật vài bộ lọc (Price, Brand…) rồi bỏ từng chip hoặc bấm “Clear all”.']},
+
+{id:'pharmacy', g:'shop', title:'Mua theo nhà thuốc',
+ goal:'Khách chọn một nhà thuốc quen hoặc gần nhất rồi mua trong cửa hàng của nhà thuốc đó: mọi giá, tồn kho và cách giao nhận là của riêng nhà thuốc này.',
+ entry:'Nút và khối “Shop by pharmacy” ở trang chủ, menu Pharmacies, lối tắt “Pharmacies near you”, “Browse pharmacies” ở Catalogue, “Visit store” trong bảng so sánh, “Shop more here” trong giỏ.',
+ outcome:'Sản phẩm vào giỏ dưới tên nhà thuốc này. Có thể vào thêm nhà thuốc khác — mỗi nhà thuốc là một đơn riêng.',
+ screens:'Trang chủ · Pharmacies on GPLink (danh sách + bản đồ) · Cửa hàng nhà thuốc · Chi tiết sản phẩm',
+ lanes:L3(), phases:[[0,3,'Chọn nhà thuốc'],[4,6,'Mua trong cửa hàng']],
+ nodes:[
+  N('p1',0,0,'start','Trang chủ — Shop by pharmacy','Nút “Shop by pharmacy” trên hero và khối 4 nhà thuốc gần nhất: trạng thái mở cửa, giao ~N phút hoặc “Pickup only”, nút “Shop this pharmacy”.'),
+  N('p2',0,1,'screen','Pharmacies on GPLink','Danh sách + bản đồ: tìm theo khu vực, đường hoặc tên; lọc State / Area; “Use my location” sắp theo khoảng cách. Mỗi thẻ có giờ mở cửa, giao hàng hoặc “Pickup only”, Directions, WhatsApp; bấm thẻ hoặc ghim để xem trên bản đồ.'),
+  N('p3',0,2,'decision','Nhà thuốc đang mở?','Chỉ vào mua được khi nhà thuốc đang mở cửa.'),
+  N('p4',0,3,'step','Bấm “Shop this pharmacy”','Trên thẻ nhà thuốc hoặc ở khối trang chủ. Thông báo “Now shopping at … — its own prices and stock”.'),
+  N('p5',0,4,'screen','Cửa hàng nhà thuốc','Catalogue chỉ của một nhà thuốc: đầu trang “Pharmacy store” với tên, địa chỉ, giờ mở cửa và Directions. Giá và tồn kho trên mọi thẻ là của nhà thuốc này; bộ lọc Pharmacy được ẩn.'),
+  N('p6',0,5,'step','Chọn sản phẩm','Tìm, lọc như bình thường (hộp gợi ý ghi “Products at …”). Trang chi tiết chọn sẵn nhà thuốc này (nhãn “You’re shopping here”) nhưng vẫn hiện bảng so sánh.'),
+  N('p7',0,6,'end','Thêm vào giỏ','Sản phẩm vào giỏ, nằm trong nhóm của nhà thuốc này.',{go:'checkout'}),
+  N('b1',1,1,'start','Menu & lối tắt','Menu Pharmacies, lối tắt “Pharmacies near you” ở trang chủ, gợi ý “Browse pharmacies” ở Catalogue, thông báo “Welcome to GPLink”.',{k:'Lối vào khác'}),
+  N('x1',2,2,'stop','Chưa vào mua được','Nhà thuốc đóng cửa chỉ có nút khóa “Opens at …”. Chọn nhà thuốc khác đang mở.'),
+  N('b2',1,3,'start','Vào thẳng cửa hàng','“Visit store” trong bảng so sánh ở trang sản phẩm, hoặc “Shop more here” ở một nhóm trong giỏ hàng.',{k:'Lối vào khác'}),
+  N('g2',1,4,'goto','So sánh mọi nhà thuốc','Nút “Compare all pharmacies” ở đầu cửa hàng: thoát cửa hàng, giá trở lại dạng so sánh “From RM …”.',{go:'search'})],
+ main:['p1','p2','p3','p4','p5','p6','p7'],
+ edges:[E('p1','p2','main','All pharmacies'),E('p1','p4','branch','Bấm thẳng trên thẻ',{fs:'l',ts:'l',x:'L',ls:1,lt:0.5}),E('b1','p2','branch'),E('p2','p3','main'),E('p3','p4','main','Đang mở'),E('p3','x1','error','Đóng cửa'),
+  E('b2','p4','branch'),E('p4','p5','main'),E('p5','g2','branch'),E('p5','p6','main'),E('p6','p7','main','Add to cart')],
+ tips:['Bấm “Shop this pharmacy” ở Farmasi Amani (chỉ nhận tại quầy) để thấy giá và tồn kho đổi theo nhà thuốc.','Wellcare Pharmacy đang đóng cửa — chỉ hiện “Opens at 09:00”.','Trong cửa hàng, mở một sản phẩm: dòng của nhà thuốc này trong bảng so sánh có nhãn “You’re shopping here”.']},
+
+{id:'location', g:'shop', title:'Vị trí giao hàng',
+ goal:'Khách đặt vị trí một lần — bằng định vị, mã bưu chính hoặc địa chỉ đã lưu. GPLink dùng vị trí này để tính khoảng cách, thời gian giao và giá thấp nhất trong bán kính 10 km, rồi điền sẵn địa chỉ khi thanh toán.',
+ entry:'Chip “Set delivery location” / “Deliver to …” trên thanh trên cùng; “Set location” ở trang sản phẩm; “Change” trong tóm tắt giỏ hàng và ở địa chỉ giao hàng; “Use my location” ở trang Pharmacies.',
+ outcome:'Chip hiện “Deliver to …”; giá, tồn kho và thời gian giao được tính theo vị trí mới.',
+ screens:'Hộp thoại “Where should we deliver?” · Pharmacies · Chi tiết sản phẩm · Your cart · Your order',
+ lanes:L3('Cách khác'), phases:[[0,2,'Mở hộp thoại'],[3,4,'Đặt vị trí'],[5,5,'Kết quả']],
+ nodes:[
+  N('v1',0,0,'start','Chip vị trí trên thanh trên cùng','Chưa đặt: “Set delivery location”. Đã đặt: “Deliver to …” kèm địa chỉ hoặc mã bưu chính.'),
+  N('v2',0,1,'screen','Where should we deliver?','“We’ll show what’s in stock near you and how fast it can arrive.” Đã đặt thì hiện vị trí hiện tại (“Delivering to …”).',{k:'Hộp thoại'}),
+  N('v3',0,2,'decision','Cách đặt vị trí?','Dùng vị trí hiện tại, nhập mã bưu chính, hoặc chọn địa chỉ đã lưu (“Saved addresses” — chỉ khi đã đăng nhập và có địa chỉ).'),
+  N('v4',0,3,'step','Bấm “Use my location”','Nút chuyển sang “Locating…” trong giây lát. Ở trang Pharmacies, nút này định vị ngay, không qua hộp thoại.'),
+  N('v5',0,4,'system','Tính lại theo vị trí','Khoảng cách tới từng nhà thuốc, thời gian giao (~N phút trong 10 km; xa hơn là giao mở rộng ~2 giờ) và giá thấp nhất trong bán kính 10 km.'),
+  N('v6',0,5,'end','Deliver to …','Hộp thoại đóng, thông báo “Showing stock and delivery times near you”. Nhà thuốc sắp theo khoảng cách; khi thanh toán, địa chỉ giao hàng được điền sẵn (“Filled in from your delivery location…”).'),
+  N('b0',1,0,'start','Lối vào khác','“Set location” ở trang sản phẩm, “Change” trong tóm tắt giỏ hàng và ở mục địa chỉ khi thanh toán.',{k:'Lối vào khác'}),
+  N('b1',1,2,'step','Nhập mã bưu chính','5 chữ số rồi bấm “Find”.'),
+  N('b2',1,3,'decision','Mã dùng được?','Đúng 5 chữ số và nằm trong vùng có nhà thuốc đối tác (Kuala Lumpur, Selangor).'),
+  N('x1',2,3,'error','Chưa dùng được mã này','Sai định dạng: “Postcode must be 5 digits.” Ngoài vùng: “No partner pharmacies near <mã> yet.”')],
+ main:['v1','v2','v3','v4','v5','v6'],
+ edges:[E('v1','v2','main'),E('b0','v2','branch',null,{fs:'b',ts:'r'}),E('v2','v3','main'),E('v3','v4','main','Định vị'),E('v3','b1','branch','Postcode'),
+  E('v3','v5','branch','Địa chỉ đã lưu',{fs:'l',ts:'l',x:'L',ls:1,lt:0.75}),E('b1','b2','branch','Find'),E('b2','x1','error','Không'),E('x1','b1','back','Nhập lại',{fs:'t',ts:'r'}),
+  E('b2','v5','branch','Có',{fs:'b',ts:'r'}),E('v4','v5','main'),E('v5','v6','main')],
+ tips:['Bấm chip “Set delivery location” rồi “Use my location” — vị trí mẫu là 18 Jalan Maarof, Bangsar.','Mã bưu chính 59000 (Bangsar) hoặc 47300 (Petaling Jaya) dùng được; 80000 báo “No partner pharmacies near 80000 yet.”','Đăng nhập bằng 12-345 4821 để thấy “Saved addresses” trong hộp thoại.']},
+
+{id:'checkout', g:'shop', title:'Giỏ hàng & thanh toán',
+ goal:'Giỏ hàng gom sản phẩm từ nhiều nhà thuốc. Mỗi nhà thuốc thành một đơn riêng: khách chọn nhận tại quầy hoặc giao hàng cho từng đơn, rồi thanh toán một lần cho tất cả.',
+ entry:'“Add to cart” ở trang sản phẩm (luồng 01, 02), biểu tượng giỏ trên header, “Buy again” ở đơn cũ.',
+ outcome:'Mỗi nhà thuốc nhận một đơn (GP-2026-xxxx); app mở Theo dõi đơn với một tab cho mỗi đơn.',
+ screens:'Your cart · Your order · Hộp thoại Sign in · Cổng thanh toán · Theo dõi đơn',
+ lanes:L3(), phases:[[0,3,'Giỏ hàng'],[4,9,'Đặt đơn'],[10,12,'Thanh toán'],[13,14,'Hoàn tất']],
+ nodes:[
+  N('c1',0,0,'start','Thêm vào giỏ','Từ luồng 01 hoặc 02. Mỗi dòng trong giỏ gắn với nhà thuốc đã chọn; cùng một thuốc ở hai nhà thuốc là hai dòng riêng.'),
+  N('c2',0,1,'screen','Your cart','Sản phẩm nhóm theo nhà thuốc: tên, khoảng cách, cách giao nhận. Tick từng món hoặc cả nhóm; “Remove selected” hỏi lại trước khi xóa; “Shop more here” mở lại cửa hàng đó. Tóm tắt: “Deliver to …”, số đơn (“2 · one per pharmacy”), phí giao tính ở bước sau.'),
+  N('c3',0,2,'decision','Giỏ có từ 2 nhà thuốc?','Mỗi nhà thuốc là một đơn với phí giao riêng.'),
+  N('c4',0,3,'step','Bấm “Checkout (N)”','Chỉ tính các món đã tick. Chưa tick món nào thì nút bị khóa: “Select at least one item to check out.”'),
+  N('c5',0,4,'screen','Your order — từng đơn','Mỗi nhà thuốc một thẻ “Order 1 of 2”: “Pick up in store” (Free, sẵn sàng ~N phút) hoặc “Delivery” (RM 6, ~N phút). Nhà thuốc “Pickup only” bị khóa Delivery.'),
+  N('c6',0,5,'decision','Có đơn giao hàng?','Chỉ cần một đơn chọn Delivery là phải nhập địa chỉ.'),
+  N('c7',0,6,'step','Nhập người nhận tại quầy','Tất cả đơn đều nhận tại quầy: chỉ cần họ tên và số di động (“Pickup contact”). Đã đăng nhập thì điền sẵn.'),
+  N('c8',0,7,'step','Chọn phương thức thanh toán','FPX, thẻ tín dụng/ghi nợ, ví điện tử. COD chỉ chọn được khi tất cả các đơn đều giao hàng.'),
+  N('c9',0,8,'step','Bấm “Place order”','Bị khóa khi thiếu địa chỉ, thiếu tên & số điện thoại, hoặc có nhà thuốc đang đóng cửa — dòng gợi ý dưới nút cho biết còn thiếu gì.'),
+  N('c10',0,9,'decision','Đã đăng nhập?','Khách chưa đăng nhập vẫn điền được mọi bước; mục Contact ghi “We only need a mobile number — it also signs you into FEV3R.”'),
+  N('c11',0,10,'decision','Phương thức thanh toán?','COD tạo đơn ngay; FPX, thẻ và ví chuyển sang cổng thanh toán.'),
+  N('c12',0,11,'screen','Cổng thanh toán','Một lần trả cho tất cả đơn: “GPLink · 2 orders”, mã tham chiếu và tổng tiền. Chọn ngân hàng (FPX), nhập thẻ, hoặc chọn ví.',{k:'Màn hình đối tác'}),
+  N('c13',0,12,'decision','Thanh toán thành công?','Đối tác thanh toán trả kết quả về GPLink.'),
+  N('c14',0,13,'system','Tách thành từng đơn','Mỗi nhà thuốc nhận một đơn với mã GP-2026-xxxx riêng. Giỏ chỉ còn các món chưa tick. Thông báo “Payment successful · 2 orders created” (COD: “Order … placed · pay on delivery”).'),
+  N('c15',0,14,'end','Theo dõi từng đơn','Tự mở Theo dõi đơn; tab ở đầu trang chuyển giữa các đơn.',{go:'tracking'}),
+  N('b1',1,2,'step','Gộp về một nhà thuốc','Nếu một nhà thuốc có đủ tất cả món, giỏ gợi ý “<nhà thuốc> has all N items for RM … — one order, one delivery fee.” Bấm “Buy all from …” để chuyển cả giỏ sang đó.'),
+  N('x1',2,4,'error','Nhà thuốc đóng cửa','Thẻ đơn báo nhà thuốc đang đóng cửa: bỏ các món đó hoặc chọn nhà thuốc khác ở trang sản phẩm. “Place order” bị khóa đến khi sửa.'),
+  N('b2',1,5,'step','Nhập địa chỉ giao hàng','Một địa chỉ cho mọi đơn giao, điền sẵn từ vị trí giao hàng (luồng 03) — chỉ cần thêm số nhà. Đã đăng nhập thì chọn nhanh địa chỉ đã lưu.'),
+  N('g3',1,9,'goto','Đăng nhập OTP','Hộp thoại “Sign in to place your order”: giỏ và địa chỉ được giữ. Xác minh xong tự đặt đơn tiếp, không cần bấm lại.',{go:'signin'}),
+  N('x2',2,11,'stop','Về lại Your order','“Cancel and return to GPLink”: chưa trừ tiền (“Payment cancelled — you have not been charged”). Có thể đổi phương thức rồi đặt lại.',{k:'Quay lại'}),
+  N('x3',2,12,'error','Payment didn’t go through','Ngân hàng hoặc ví từ chối; chưa trừ tiền, đơn được giữ. Chọn “Try again” hoặc “Choose another payment method”.')],
+ main:['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10','c11','c12','c13','c14','c15'],
+ edges:[E('c1','c2','main'),E('c2','c3','main'),E('c3','b1','branch','Có'),E('c3','c4','main','Không'),E('b1','c4','branch','Gộp hoặc bỏ qua',{fs:'b',ts:'r',ls:0}),
+  E('c4','c5','main'),E('c5','x1','error','Đóng cửa'),E('c5','c6','main'),
+  E('c6','b2','branch','Có'),E('c6','c7','main','Không'),E('b2','c8','branch',null,{fs:'b',ts:'r',bo:-12}),E('c7','c8','main'),
+  E('c8','c9','main'),E('c9','c10','main'),E('c10','g3','branch','Chưa'),E('c10','c11','main','Rồi'),E('g3','c11','back','Đăng nhập xong',{fs:'b',ts:'r'}),
+  E('c11','c12','main','FPX / thẻ / ví'),E('c11','c14','branch','COD',{fs:'l',ts:'l',x:'L',ls:1,lt:0.5}),E('c12','c13','main'),E('c12','x2','error','Cancel',{fo:-12,bo:-12}),
+  E('c13','c14','main','Thành công'),E('c13','x3','error','Thất bại',{fo:12,bo:12}),E('x3','c12','back','Try again',{fs:'l',ts:'r',fo:-12,bo:12}),E('x3','x2','back','Đổi phương thức',{fs:'t',ts:'b'}),
+  E('x2','c8','back','Quay lại Your order',{fs:'r',ts:'r',bo:12,x:'R',ls:2}),E('c14','c15','main')],
+ tips:['Nút “Checkout” trên thanh công cụ prototype nạp sẵn giỏ mẫu từ 2 nhà thuốc (Farmasi Sentosa và Farmasi Amani — chỉ nhận tại quầy).','Chưa đăng nhập vẫn bấm được “Place order”: hộp thoại đăng nhập hiện ra, xác minh xong đơn tự đặt tiếp. Số mẫu đã có tài khoản: 12-345 4821; mã OTP là 6 số bất kỳ.','Trên cổng thanh toán, bấm “Prototype: simulate a failed payment” để xem trạng thái thất bại.']},
+
+{id:'tracking', g:'shop', title:'Theo dõi đơn hàng',
+ goal:'Mỗi nhà thuốc xử lý đơn của mình nên mỗi đơn có trạng thái riêng qua 4 bước. Khách chuyển giữa các đơn cùng lần thanh toán, đưa mã QR khi nhận tại quầy, hủy được khi nhà thuốc chưa chuẩn bị, và mua lại khi đơn kết thúc.',
+ entry:'Tự mở sau khi đặt đơn; link “Track order”; Account → Orders; thông báo đơn hàng trên chuông.',
+ outcome:'Từng đơn ở trạng thái Dispensed (đã nhận / đã giao) hoặc Cancelled (đã hủy, hoàn tiền).',
+ screens:'Theo dõi đơn (tab các đơn) · Hộp thoại “Cancel this order?”',
+ lanes:L3('Khách thao tác'), phases:[[0,1,'Sau khi đặt'],[2,4,'Nhà thuốc xử lý'],[5,8,'Nhận hàng']],
+ nodes:[
+  N('t1',0,0,'start','Đặt đơn thành công','Sau khi thanh toán (hoặc chọn COD) app tự mở màn hình theo dõi. Một lần thanh toán tạo một đơn cho mỗi nhà thuốc. Cũng mở được từ “Track order”, Account → Orders hoặc thông báo của đơn.'),
+  N('t2',0,1,'screen','Theo dõi đơn hàng','Thanh tiến trình 4 bước kèm giờ. Bên phải: nơi nhận/giao, tổng tiền và cách trả, “Call pharmacy” gọi đúng nhà thuốc của đơn, “Track another order”. Mỗi lần đổi trạng thái có thông báo mới trên chuông (luồng 10).'),
+  N('t3',0,2,'system','1 · Accepted','Nhà thuốc của đơn đã nhận đơn. Chỉ ở bước này khách mới hủy được.',{k:'Nhà thuốc'}),
+  N('t4',0,3,'system','2 · Preparing','Dược sĩ đang soạn thuốc. Nút hủy không còn hiện.',{k:'Dược sĩ'}),
+  N('t5',0,4,'system','3 · Ready','Nhận tại quầy: “Ready for pickup”. Giao hàng: “Ready — rider on the way”.',{k:'Nhà thuốc'}),
+  N('t6',0,5,'decision','Nhận tại quầy?','Cách nhận đã chọn cho đơn này lúc thanh toán.'),
+  N('t7',0,6,'step','Đưa mã QR tại quầy','Mã QR và mã ngắn “GP · xxxx” hiển thị đến khi nhận hàng.'),
+  N('t8',0,7,'end','4 · Dispensed','“Collected. Thank you.” hoặc “Delivered. Thank you.” — đơn kết thúc.'),
+  N('b0',1,1,'step','Chuyển giữa các đơn','Một lần thanh toán tạo nhiều đơn thì đầu trang ghi “This checkout created N orders — one per pharmacy” kèm tab cho từng đơn (mã đơn · nhà thuốc · trạng thái).'),
+  N('b1',1,2,'screen','Hộp thoại “Cancel this order?”','“Cancel order” → “Yes, cancel” hoặc “Keep order”. Chỉ hủy đơn đang xem, các đơn khác không đổi.',{k:'Hộp thoại'}),
+  N('b2',1,3,'stop','Đã hủy (bạn hủy)','“You cancelled this order”. Hoàn tiền về phương thức đã trả trong 3–5 ngày làm việc; COD thì không bị tính tiền.'),
+  N('x1',2,4,'error','Nhà thuốc hủy đơn','“Cancelled by …” kèm lý do: hết hàng không thay được, hoặc không thể xử lý hôm nay. Chỉ ảnh hưởng đơn của nhà thuốc đó.'),
+  N('b3',1,5,'system','Shipper giao hàng','Nhà thuốc giao đơn cho shipper, dự kiến 35–50 phút; khách chờ tại địa chỉ đã nhập.',{k:'Giao hàng'}),
+  N('x2',2,5,'goto','Mua ở nhà thuốc khác','Hết hàng → “Continue shopping”, tìm lại thuốc và chọn nhà thuốc khác còn hàng.',{go:'search'}),
+  N('t9',0,8,'goto','Mua lại (Buy again)','Đơn kết thúc hoặc bị hủy: “Buy again” thêm lại thuốc không kê toa vào giỏ — ưu tiên nhà thuốc cũ, hết hàng thì chọn nhà thuốc giá tốt nhất còn hàng. Thuốc kê toa không được thêm.',{go:'checkout'})],
+ main:['t1','t2','t3','t4','t5','t6','t7','t8'],
+ edges:[E('t1','t2','main'),E('t2','b0','branch'),E('t2','t3','main'),E('t3','b1','branch','Hủy',{fo:-12,bo:-12}),E('b1','t3','back','Giữ',{fs:'l',ts:'r',fo:12,bo:12}),E('b1','b2','branch','Yes, cancel'),
+  E('t3','t4','main'),E('t4','x1','error','Nhà thuốc hủy',{fs:'b',ts:'t',fo:44}),E('t4','t5','main'),E('t5','t6','main'),E('t6','t7','main','Tại quầy'),E('t6','b3','branch','Giao hàng'),
+  E('b3','t8','branch',null,{fs:'b',ts:'r'}),E('t7','t8','main'),E('t8','t9','branch','Buy again'),E('x1','x2','error','Hết hàng')],
+ tips:['Trên thanh công cụ prototype bấm “Payment” rồi “Pay” để tạo 2 đơn từ giỏ mẫu và thấy tab chuyển đơn.','“Next status →” chuyển trạng thái đơn đang xem; “Pharmacy cancels” mô phỏng nhà thuốc hủy.','“Cancel order” chỉ hiện khi đơn còn ở trạng thái Accepted.']},
+
+{id:'lookup', g:'shop', title:'Tra cứu đơn bằng mã',
+ goal:'Khách — kể cả chưa đăng nhập — xem trạng thái đơn bằng mã đơn và số điện thoại, xác minh bằng mã OTP 6 số.',
+ entry:'“Track order” trên thanh trên cùng hoặc ở lối tắt trang chủ khi chưa có đơn đang chạy; “Track another order”; nút “Track an order” trong chat hỗ trợ.',
+ outcome:'Mở được màn hình Theo dõi đơn của đơn khớp số điện thoại.',
+ screens:'Track an order (form + mã xác minh) · Theo dõi đơn',
+ lanes:L3(), phases:[[0,2,'Nhập thông tin'],[3,5,'Xác minh'],[6,7,'Kết quả']],
+ nodes:[
+  N('l1',0,0,'start','Track order','“Track order” trên thanh trên cùng hoặc ở lối tắt trang chủ (khi chưa có đơn đang chạy), “Track another order” trên màn hình theo dõi, hoặc “Track an order” trong chat hỗ trợ.'),
+  N('l2',0,1,'screen','Track an order','Form gồm mã đơn và số điện thoại đã dùng khi đặt. Không cần đăng nhập. Đang có đơn chạy thì có nút “Back to my current order”.'),
+  N('l3',0,2,'step','Nhập mã đơn + số điện thoại','Mã đơn dạng GP-2026-0931 (gõ 8 chữ số cũng được, tự định dạng); số điện thoại 9–10 chữ số. Chưa hợp lệ thì nút “Send code” bị khóa.'),
+  N('l4',0,3,'system','Gửi mã 6 số qua SMS','Mã gửi tới số điện thoại vừa nhập.'),
+  N('l5',0,4,'screen','Nhập mã xác minh','Ô nhập 6 số, “Resend code” sau 30 giây, “Change details” để sửa thông tin.'),
+  N('l6',0,5,'decision','Mã đúng?','Kiểm tra mã vừa nhập.'),
+  N('l7',0,6,'decision','Có đơn khớp số điện thoại?','Tìm đơn theo mã và số điện thoại.'),
+  N('l8',0,7,'end','Xem trạng thái đơn','Mở màn hình Theo dõi đơn (chỉ hiện trạng thái, không hiện thông tin y tế).',{go:'tracking'}),
+  N('x1',2,5,'error','Sai mã OTP','“That code is incorrect. N attempt(s) left.” Sai 3 lần thì khóa — chờ 30 giây để “Resend code”.'),
+  N('x2',2,6,'stop','Order not found','Không tìm thấy đơn với số điện thoại này. Chọn “Try again” hoặc “Call pharmacist hotline”.')],
+ main:['l1','l2','l3','l4','l5','l6','l7','l8'],
+ edges:[E('l1','l2','main'),E('l2','l3','main'),E('l3','l4','main','Send code'),E('l4','l5','main'),E('l5','l6','main','Verify & view order'),E('l6','x1','error','Sai'),
+  E('x1','l5','back','Nhập lại',{fs:'t',ts:'r'}),E('l6','l7','main','Đúng'),E('l7','x2','error','Không'),E('x2','l2','back','Try again',{fs:'r',ts:'r',x:'R',ls:2}),
+  E('l5','l2','back','Change details',{fs:'l',ts:'l',x:'L',ls:1,lt:0.83}),E('l7','l8','main','Có')],
+ tips:['Thử mã đơn GP-2026-0931 hoặc GP-2026-0874 với số điện thoại bất kỳ 9–10 số.','Mã OTP: 6 số bất kỳ; 000000 là sai mã, sai 3 lần sẽ bị khóa.','Mã đơn khác hai mã trên → màn hình “Order not found”.']},
+
+{id:'signin', g:'acct', title:'Đăng nhập bằng OTP',
+ goal:'Đăng nhập chỉ bằng số điện thoại và mã OTP 6 số; xong sẽ quay lại đúng màn hình đang làm dở — đang thanh toán thì đơn được đặt tiếp ngay.',
+ entry:'Nút Sign in trên header; “Sign in” ở mục Contact hoặc “Place order” khi chưa đăng nhập; “Send question” ở trang sản phẩm khi chưa đăng nhập.',
+ outcome:'Đã đăng nhập, quay lại màn hình trước, thông báo “Signed in as …”.',
+ screens:'Hộp thoại Sign in (bước số điện thoại → bước mã)',
+ lanes:L3(), phases:[[0,3,'Số điện thoại'],[4,6,'Mã OTP'],[7,8,'Hoàn tất']],
+ nodes:[
+  N('s1',0,0,'start','Bấm “Sign in”','Nút Sign in trên header, “Sign in” ở mục Contact của Your order, “Place order” khi chưa đăng nhập, hoặc “Send question” ở trang sản phẩm.'),
+  N('s2',0,1,'screen','Hộp thoại Sign in','Tiêu đề “Welcome back” — từ thanh toán là “Sign in to place your order” (giỏ và địa chỉ được giữ). Nhập số di động Malaysia (+60). Cuối hộp thoại: “Don’t have an account? Sign up”.',{k:'Hộp thoại'}),
+  N('s3',0,2,'decision','Số hợp lệ?','Số di động 9–10 chữ số.'),
+  N('s4',0,3,'decision','Số đã có tài khoản?','Tra số điện thoại trong danh sách tài khoản.'),
+  N('s5',0,4,'system','Gửi mã 6 số qua SMS','Hộp thoại chuyển sang bước “Enter the code” (“Sent to +60 …”).'),
+  N('s6',0,5,'screen','Nhập mã OTP','Ô nhập 6 số. “Resend code” sau 30 giây; “Change number” để quay lại sửa số.',{k:'Hộp thoại'}),
+  N('s7',0,6,'decision','Mã đúng?','Kiểm tra mã vừa nhập.'),
+  N('s8',0,7,'system','Tạo phiên đăng nhập','Một tài khoản dùng chung cho GPLink và FEV3R. Điền sẵn tên, số điện thoại và địa chỉ mặc định cho đơn hàng.'),
+  N('s9',0,8,'end','Quay lại màn hình trước','Thông báo “Signed in as …”. Vào từ “Place order” thì đơn tự đặt tiếp; vào từ Account thì mở trang Account.'),
+  N('x1',2,2,'error','Số không hợp lệ','Viền đỏ và thông báo “Enter a valid Malaysian mobile number.”'),
+  N('g1',1,3,'goto','Tạo tài khoản','“No GPLink account uses this number yet.” → “Create an account”, số điện thoại được điền sẵn.',{go:'signup'}),
+  N('x2',2,6,'error','Sai mã OTP','“That code is incorrect. N attempt(s) left.” Sai 3 lần: “Too many attempts” — phải gửi lại mã mới.')],
+ main:['s1','s2','s3','s4','s5','s6','s7','s8','s9'],
+ edges:[E('s1','s2','main'),E('s2','s3','main','Send code'),E('s3','x1','error','Không'),E('x1','s2','back','Sửa số',{fs:'t',ts:'r'}),E('s3','s4','main','Có'),E('s4','g1','branch','Chưa có'),
+  E('s4','s5','main','Có'),E('s5','s6','main'),E('s6','s7','main','Verify & continue'),E('s7','x2','error','Sai'),E('x2','s6','back','Nhập lại / gửi mã mới',{fs:'t',ts:'r'}),
+  E('s7','s8','main','Đúng'),E('s8','s9','main'),E('s6','s2','back','Change number',{fs:'l',ts:'l',x:'L',ls:1,lt:0.625})],
+ tips:['Số mẫu đã có tài khoản: 12-345 4821.','Mã OTP: 6 số bất kỳ; 000000 là sai mã.','Nhập số chưa có tài khoản để thấy gợi ý “Create an account”.']},
+
+{id:'signup', g:'acct', title:'Tạo tài khoản',
+ goal:'Tạo tài khoản GPLink bằng Google hoặc điền tay; số điện thoại là thông tin đăng nhập và được xác minh bằng OTP.',
+ entry:'Link “Sign up” cuối hộp thoại Sign in; “Create an account” khi số chưa có tài khoản.',
+ outcome:'Tài khoản được tạo và tự đăng nhập.',
+ screens:'Hộp thoại Create your account · bước mã OTP',
+ lanes:L3(), phases:[[0,4,'Thông tin'],[5,6,'Kiểm tra'],[7,8,'Xác minh']],
+ nodes:[
+  N('u1',0,0,'start','Link “Sign up”','“Don’t have an account? Sign up” cuối hộp thoại đăng nhập, hoặc “Create an account” từ thông báo “No GPLink account uses this number yet”.'),
+  N('u2',0,1,'screen','Create your account','“Next time, just your mobile number and a code.” Mở từ thanh toán thì có ghi chú giỏ và địa chỉ được giữ. Cuối hộp thoại: “Already have an account? Sign in”.',{k:'Hộp thoại'}),
+  N('u3',0,2,'decision','Dùng Google?','Nút “Continue with Google” ở đầu form.'),
+  N('u4',0,3,'step','Điền họ tên, SĐT, email','Họ tên (≥ 2 ký tự), số di động 9–10 chữ số, email tùy chọn (“For receipts only.”).'),
+  N('u5',0,4,'step','Bấm “Create account”','Kiểm tra toàn bộ form một lượt.'),
+  N('u6',0,5,'decision','Thông tin hợp lệ?','Kiểm tra họ tên, email, số điện thoại.'),
+  N('u7',0,6,'decision','Số đã có tài khoản?','Mỗi số điện thoại chỉ một tài khoản.'),
+  N('u8',0,7,'screen','Nhập mã OTP','Giống bước mã OTP ở luồng 07: sai mã còn N lần, khóa sau 3 lần, gửi lại sau 30 giây.',{k:'Hộp thoại'}),
+  N('u9',0,8,'end','Tài khoản đã tạo','Tự đăng nhập, thông báo “Account created · welcome, …”, quay lại màn hình trước.'),
+  N('b1',1,2,'system','Điền sẵn từ Google','Tên và email lấy từ Google (bấm “Change” để đổi); form chỉ còn ô số điện thoại — “Add your mobile number — you will use it to sign in.”'),
+  N('x1',2,5,'error','Báo lỗi từng ô','“Enter your full name.” / “Enter a valid email address.” / “Enter a valid Malaysian mobile number.”'),
+  N('g1',1,6,'goto','Đăng nhập OTP','“This number already has a GPLink account.” → “Sign in instead”, số được điền sẵn.',{go:'signin'})],
+ main:['u1','u2','u3','u4','u5','u6','u7','u8','u9'],
+ edges:[E('u1','u2','main'),E('u2','u3','main'),E('u3','b1','branch','Có'),E('u3','u4','main','Không'),E('b1','u4','branch',null,{fs:'b',ts:'r',bo:-12}),E('u4','u5','main'),E('u5','u6','main'),
+  E('u6','x1','error','Không'),E('x1','u4','back','Sửa lại',{fs:'t',ts:'r',bo:12}),E('u6','u7','main','Có'),E('u7','g1','branch','Có rồi'),E('u7','u8','main','Chưa'),E('u8','u9','main','Mã đúng')],
+ tips:['“Continue with Google” điền sẵn tên và email mẫu.','Nhập số 12-345 4821 để thấy lỗi “already has a GPLink account”.','Email có thể bỏ trống.']},
+
+{id:'account', g:'acct', title:'Quản lý tài khoản',
+ goal:'Trang Account gom hồ sơ, lịch sử đơn, sổ địa chỉ và ngôn ngữ vào một nơi.',
+ entry:'Avatar / tên trên header (chỉ hiện khi đã đăng nhập).',
+ outcome:'Thông tin được cập nhật, hoặc mở tiếp luồng theo dõi đơn, hoặc đăng xuất.',
+ screens:'Account · Theo dõi đơn',
+ lanes:L3('Mở luồng khác'), phases:[[0,2,'Vào trang'],[3,6,'Các mục trên trang'],[7,7,'Thoát']],
+ nodes:[
+  N('a1',0,0,'start','Bấm avatar / tên','Nút chữ cái đầu và tên trên header, cạnh chuông thông báo.'),
+  N('a2',0,1,'decision','Đã đăng nhập?','Nút avatar chỉ hiện khi đã đăng nhập. Mở Account khi chưa đăng nhập thì hộp thoại Sign in hiện trước.'),
+  N('a3',0,2,'screen','Trang Account','Hồ sơ ở đầu trang (số điện thoại, email, “Linked to FEV3R”), rồi Orders, Addresses, Preferences.'),
+  N('a4',0,3,'step','Hồ sơ — Edit profile','Sửa họ tên (≥ 2 ký tự) và email. Không đổi được số điện thoại tại đây — muốn đổi thì đăng nhập bằng số mới.'),
+  N('a5',0,4,'step','Orders — lịch sử đơn','Mỗi nhà thuốc một dòng đơn: mã, ngày, nhà thuốc, hình thức, trạng thái, tổng. “Track” (đơn đang chạy) / “View” mở chi tiết; “Buy again” thêm lại thuốc không kê toa vào giỏ.'),
+  N('a7',0,5,'step','Addresses — sổ địa chỉ','Thêm, sửa, xóa, đặt mặc định; nhãn Home / Work / Other. Địa chỉ đã lưu dùng lại khi đặt vị trí giao hàng và khi thanh toán.'),
+  N('a8',0,6,'step','Preferences','Ngôn ngữ English / Bahasa Malaysia (cũng đổi được ở thanh trên cùng).'),
+  N('a9',0,7,'stop','Sign out','Xóa phiên đăng nhập và về Trang chủ.',{k:'Thoát'}),
+  N('g1',1,1,'goto','Đăng nhập OTP','Đăng nhập xong mở thẳng trang Account.',{go:'signin'}),
+  N('g2',1,4,'goto','Theo dõi đơn hàng','Từ nút Track / View; xem đơn cũ có nút “Back to my orders”.',{go:'tracking'}),
+  N('x1',2,5,'error','Mã bưu chính sai','“Postcode must be 5 digits.” — nút “Save address” bị khóa đến khi sửa.')],
+ main:['a1','a2','a3','a4','a5','a7','a8','a9'],
+ edges:[E('a1','a2','main'),E('a2','a3','main','Rồi'),E('a2','g1','branch','Chưa'),E('g1','a3','back',null,{fs:'b',ts:'r'}),
+  E('a3','a4','main',null,{fs:'l',ts:'l',x:'L'}),E('a3','a5','main',null,{fs:'l',ts:'l',x:'L'}),E('a3','a7','main',null,{fs:'l',ts:'l',x:'L'}),E('a3','a8','main',null,{fs:'l',ts:'l',x:'L'}),E('a3','a9','main',null,{fs:'l',ts:'l',x:'L'}),
+  E('a5','g2','branch'),E('a7','x1','error','Sai mã bưu chính')],
+ tips:['Đăng nhập bằng 12-345 4821 để có sẵn lịch sử đơn và địa chỉ mẫu.','Nhập mã bưu chính khác 5 số để thấy lỗi.','Nút “Account” trên thanh công cụ prototype đăng nhập sẵn tài khoản mẫu.']},
+
+{id:'notify', g:'acct', title:'Thông báo',
+ goal:'Khách đã đăng nhập nhận thông báo trên chuông ở header: trạng thái từng đơn, tin giảm giá và tin chào mừng. Bấm một thông báo để mở đúng màn hình liên quan.',
+ entry:'Biểu tượng chuông trên header (chỉ hiện khi đã đăng nhập); số trên chuông là số thông báo chưa đọc.',
+ outcome:'Thông báo được đánh dấu đã đọc và màn hình liên quan mở ra.',
+ screens:'Header · Bảng Notifications · Theo dõi đơn · Chi tiết sản phẩm · Pharmacies',
+ lanes:[{n:'Luồng chính'},{n:'Nhánh rẽ'}], phases:[[0,2,'Nhận thông báo'],[3,4,'Xem'],[5,6,'Mở nội dung']],
+ nodes:[
+  N('n1',0,0,'start','Đơn đổi trạng thái','Mỗi đơn có một thông báo theo trạng thái mới nhất: “Order … accepted”, “… is being prepared”, “… is ready for pickup” / “… is on the way”, “… completed”, “… was cancelled”. Đổi trạng thái thì thông báo mới, chưa đọc.'),
+  N('n2',0,1,'decision','Đã đăng nhập?','Chuông chỉ hiện khi đã đăng nhập; chưa đăng nhập thì header chỉ có nút Sign in.'),
+  N('n3',0,2,'step','Bấm chuông trên header','Số đỏ trên chuông là số thông báo chưa đọc.'),
+  N('n4',0,3,'screen','Bảng Notifications','Mới nhất ở trên. Chưa đọc: chữ đậm, nền xanh nhạt, có chấm. Mỗi dòng: tiêu đề, nhà thuốc hoặc nội dung, thời gian (“5 min ago”).',{k:'Bảng nổi'}),
+  N('n5',0,4,'step','Bấm một thông báo','Thông báo được đánh dấu đã đọc, bảng đóng lại.'),
+  N('n6',0,5,'decision','Loại thông báo?','Đơn hàng, giảm giá hoặc chào mừng.'),
+  N('n7',0,6,'end','Mở đơn trong thông báo','Mở Theo dõi đơn đúng đơn đó; đơn cùng lần thanh toán mở đúng tab.',{go:'tracking'}),
+  N('g1',1,1,'goto','Đăng nhập OTP','Đăng nhập xong chuông xuất hiện trên header.',{go:'signin'}),
+  N('b1',1,3,'step','Mark all as read','Đánh dấu tất cả đã đọc, số trên chuông biến mất. Nút chỉ hiện khi còn thông báo chưa đọc.'),
+  N('g2',1,5,'goto','Giảm giá: trang sản phẩm','“Price drop on Vitamin C 1000mg — Now from RM 23.40 at pharmacies near you.” mở trang sản phẩm đó.',{go:'search'}),
+  N('g3',1,6,'goto','Chào mừng: Pharmacies','“Welcome to GPLink — Compare prices across pharmacies near you, or shop a pharmacy you trust.” mở danh sách nhà thuốc.',{go:'pharmacy'})],
+ main:['n1','n2','n3','n4','n5','n6','n7'],
+ edges:[E('n1','n2','main'),E('n2','g1','branch','Chưa'),E('n2','n3','main','Rồi'),E('g1','n3','back',null,{fs:'b',ts:'r'}),E('n3','n4','main'),E('n4','b1','branch'),E('n4','n5','main'),E('n5','n6','main'),
+  E('n6','n7','main','Đơn hàng'),E('n6','g2','branch','Giảm giá',{fo:-12,bo:-12}),E('n6','g3','branch','Chào mừng',{fs:'r',ts:'l',fo:12})],
+ tips:['Bấm “Payment” rồi “Pay” trên thanh công cụ prototype (tài khoản mẫu đăng nhập sẵn): chuông có thông báo “Order … accepted”.','Bấm “Next status →”: thông báo của đơn đổi theo trạng thái và thành chưa đọc.','Bấm “Price drop on Vitamin C 1000mg” để mở trang sản phẩm.']},
+
+{id:'qa', g:'help', title:'Hỏi dược sĩ về sản phẩm',
+ goal:'Ngay trên trang sản phẩm, khách đọc thông tin và FAQ, xem các câu hỏi đã được dược sĩ trả lời, rồi gửi câu hỏi riêng để dược sĩ GPLink trả lời công khai bên dưới.',
+ entry:'Trang chi tiết sản phẩm (luồng 01, 02) — các khối phía dưới bảng so sánh nhà thuốc.',
+ outcome:'Câu hỏi được đăng, chờ dược sĩ trả lời (thường trong 1 giờ).',
+ screens:'Chi tiết sản phẩm: Product information · FAQ · Customer reviews · Questions & answers',
+ lanes:L3(), phases:[[0,2,'Đọc thông tin'],[3,5,'Đặt câu hỏi'],[6,7,'Trả lời']],
+ nodes:[
+  N('q1',0,0,'start','Trang chi tiết sản phẩm','Cuộn xuống dưới khối mua hàng và bảng so sánh nhà thuốc.'),
+  N('q2',0,1,'screen','Product information','Thanh mục: Description, Ingredients, Uses, How to use, Precautions, Side effects, Storage — bấm để nhảy tới mục. Nội dung thu gọn, “See more” / “See less”.'),
+  N('q3',0,2,'step','Đọc FAQ','“Frequently asked questions”: bấm một câu hỏi để mở hoặc đóng câu trả lời.'),
+  N('q4',0,3,'screen','Questions & answers (N)','Câu hỏi của khách kèm câu trả lời gắn nhãn “GPLink pharmacist”; câu hữu ích nhất có nhãn “Most helpful”. Sắp xếp: Most helpful, Newest, Oldest.'),
+  N('q5',0,4,'step','Gõ câu hỏi, bấm “Send question”','Ô “Ask our pharmacists about this product”; nút bị khóa khi ô còn trống.'),
+  N('q6',0,5,'decision','Đã đăng nhập?','Cần đăng nhập để gửi câu hỏi.'),
+  N('q7',0,6,'system','Câu hỏi được đăng','Hiện ngay đầu danh sách (chuyển sang Newest) với “Waiting for a pharmacist reply · usually within 1 hour”. Thông báo “Question sent · a pharmacist will reply here”.'),
+  N('q8',0,7,'end','Dược sĩ trả lời','Câu trả lời hiện ngay dưới câu hỏi, gắn nhãn “GPLink pharmacist”.'),
+  N('b1',1,2,'step','Bấm “Write a review”','Khối “Customer reviews” đang trống: “No reviews yet — Be the first to share your experience.”'),
+  N('x1',2,2,'stop','Chưa đánh giá được','Chỉ đánh giá sau khi nhận hàng: “You can review this product once an order with it has been delivered.”'),
+  N('g1',1,5,'goto','Đăng nhập OTP','Đăng nhập xong vẫn ở trang sản phẩm; câu hỏi vừa gõ còn trong ô, bấm gửi lại.',{go:'signin'})],
+ main:['q1','q2','q3','q4','q5','q6','q7','q8'],
+ edges:[E('q1','q2','main'),E('q2','q3','main'),E('q3','b1','branch'),E('b1','x1','error'),E('q3','q4','main'),E('q4','q5','main'),E('q5','q6','main'),
+  E('q6','g1','branch','Chưa'),E('g1','q5','back','Gửi lại',{fs:'t',ts:'r'}),E('q6','q7','main','Rồi'),E('q7','q8','main')],
+ tips:['Mở Paracetamol 500mg rồi cuộn xuống “Questions & answers” để xem câu trả lời mẫu của dược sĩ.','Gửi câu hỏi khi chưa đăng nhập sẽ mở hộp thoại Sign in.','“Write a review” hiện thông báo chỉ đánh giá được sau khi nhận hàng.']},
+
+{id:'chat', g:'help', title:'Chat hỗ trợ',
+ goal:'Nút chat nổi ở mọi trang mở cửa sổ GPLink Support. Khách chọn một trong ba chủ đề gợi ý — hỏi dược sĩ, gặp bác sĩ, hỗ trợ đơn hàng — hoặc tự nhắn tin, gửi ảnh.',
+ entry:'Nút chat tròn ở góc dưới bên phải mọi trang, kèm bong bóng chào ở lần đầu. Muốn gọi ngay: “Talk to a pharmacist” ở trang chủ hoặc hotline dược sĩ 24/7 1-300-88-4752 trên thanh trên cùng.',
+ outcome:'Khách được nối với dược sĩ trong chat, mở FEV3R để gặp bác sĩ, hoặc sang theo dõi / tra cứu đơn.',
+ screens:'Bong bóng chào · Cửa sổ GPLink Support · Theo dõi / tra cứu đơn · FEV3R',
+ lanes:[{n:'Luồng chính'},{n:'Bác sĩ · tự nhắn'},{n:'Đơn hàng'}], phases:[[0,2,'Mở chat'],[3,4,'Chọn chủ đề'],[5,5,'Kết quả']],
+ nodes:[
+  N('h1',0,0,'start','Nút chat nổi','Có ở mọi trang. Lần đầu có bong bóng “Hi there! We’re here to help you.” — bấm bong bóng để mở chat, bấm × để ẩn.'),
+  N('h2',0,1,'screen','Cửa sổ GPLink Support','“Here for you, every step”. Tin chào “Hi! How can GPLink help you today?” kèm 3 chủ đề gợi ý. Đóng rồi mở lại vẫn giữ nội dung chat.',{k:'Cửa sổ chat'}),
+  N('h3',0,2,'decision','Chọn chủ đề nào?','Ba chủ đề chỉ hiện trước khi khách gửi tin đầu tiên.'),
+  N('h4',0,3,'step','Chọn “Ask a pharmacist”','“Ask a pharmacist about a medicine”.'),
+  N('h5',0,4,'system','GPLink trả lời','“GPLink is typing…” rồi: “A pharmacist will join this chat shortly. Tell us the medicine name and your question.”'),
+  N('h6',0,5,'end','Dược sĩ vào chat','Khách nhắn tên thuốc và câu hỏi; dược sĩ trả lời ngay trong cửa sổ chat.'),
+  N('d1',1,1,'step','Tự nhắn hoặc gửi ảnh','Gõ tin rồi Send, hoặc đính kèm ảnh. Trả lời tự động: “Thanks! A GPLink team member will reply here shortly.” / “Got your photo. We’ll take a look and reply shortly.”'),
+  N('b1',1,3,'step','Chọn “Talk to a doctor”','“Talk to a doctor about a health concern”.'),
+  N('b2',1,4,'system','Trả lời kèm “Open FEV3R”','“Doctor consultations are provided by FEV3R — chat, call or video with MOH-registered doctors, 24/7.”'),
+  N('g1',1,5,'goto','Tư vấn bác sĩ (FEV3R)','“Open FEV3R” mở FEV3R trong tab mới.',{go:'doctor'}),
+  N('c1',2,3,'step','Chọn “Help with an order”','“I need quick help with an order”.'),
+  N('c2',2,4,'system','Trả lời kèm “Track an order”','“Happy to help. Share your order number (e.g. GP-2026-0931), or check its status here.”'),
+  N('c3',2,5,'goto','Theo dõi / tra cứu đơn','“Track an order” đóng chat: có đơn đang chạy thì mở Theo dõi đơn, chưa có thì mở form tra cứu.',{go:'lookup'})],
+ main:['h1','h2','h3','h4','h5','h6'],
+ edges:[E('h1','h2','main'),E('h2','d1','branch'),E('h2','h3','main'),E('h3','h4','main','Dược sĩ'),E('h3','b1','branch','Bác sĩ',{fs:'r',ts:'t',fo:12}),E('h3','c1','branch','Đơn hàng',{fs:'r',ts:'t',fo:-12,lt:0.8}),
+  E('h4','h5','main'),E('h5','h6','main'),E('b1','b2','branch'),E('b2','g1','branch'),E('c1','c2','branch'),E('c2','c3','branch')],
+ tips:['Bấm bong bóng “Hi there!” hoặc nút tròn ở góc phải để mở chat.','Chọn “I need quick help with an order” rồi “Track an order” để sang tra cứu đơn.','Gửi một tin nhắn hoặc một ảnh bất kỳ để thấy câu trả lời tự động.']},
+
+{id:'doctor', g:'help', title:'Tư vấn bác sĩ (FEV3R)',
+ goal:'Dịch vụ bác sĩ do đối tác FEV3R cung cấp: khách mở FEV3R từ GPLink để chat, gọi hoặc video với bác sĩ đăng ký với Bộ Y tế (MOH), 24/7, bằng chính tài khoản GPLink.',
+ entry:'Banner “Talk to a doctor online, 24/7” trên trang chủ; menu Doctors trên header; chủ đề “Talk to a doctor about a health concern” trong chat hỗ trợ.',
+ outcome:'FEV3R mở trong tab mới; khách dùng tài khoản GPLink, không cần đăng ký mới.',
+ screens:'Trang chủ (banner FEV3R) · Header · Chat hỗ trợ · FEV3R (đối tác)',
+ lanes:[{n:'Luồng chính'},{n:'Từ menu'},{n:'Từ chat'}], phases:[[0,1,'Trên GPLink'],[2,3,'Trên FEV3R']],
+ nodes:[
+  N('d1',0,0,'start','Trang chủ — banner FEV3R','Cạnh hero: “FEV3R · Online doctor” — “Talk to a doctor online, 24/7. Chat, call or video with MOH-registered Malaysian doctors. Use your GPLink account — no new sign-up.”'),
+  N('d2',0,1,'step','Bấm “Consult a doctor”','Cả banner là một liên kết (“Opens FEV3R in a new tab”).'),
+  N('d3',0,2,'system','Mở FEV3R trong tab mới','GPLink chỉ chuyển khách sang; việc đặt lịch và tư vấn diễn ra trên FEV3R.',{k:'Đối tác'}),
+  N('d4',0,3,'end','Tư vấn với bác sĩ','Chat, gọi hoặc video với bác sĩ bằng tài khoản GPLink — trang Account ghi “Linked to FEV3R”.'),
+  N('b1',1,1,'start','Menu Doctors','Trên header. Trong prototype chỉ hiện thông báo “Opens FEV3R, our partner app for doctor bookings, in a new tab.”',{k:'Lối vào khác'}),
+  N('b2',2,1,'start','Chat hỗ trợ','Chủ đề “Talk to a doctor about a health concern” → nút “Open FEV3R”.',{k:'Lối vào khác',go:'chat'})],
+ main:['d1','d2','d3','d4'],
+ edges:[E('d1','d2','main'),E('d2','d3','main'),E('b1','d3','branch',null,{fs:'b',ts:'r',bo:-12}),E('b2','d3','branch','Open FEV3R',{fs:'b',ts:'r',bo:12,lt:0.3}),E('d3','d4','main')],
+ tips:['Bấm banner FEV3R trên trang chủ: FEV3R mở trong tab mới.','Trong chat, chọn “Talk to a doctor about a health concern” để thấy nút “Open FEV3R”.']},
+
+{id:'library', g:'content', title:'Thư viện sức khỏe',
+ goal:'Khách đọc bài viết sức khỏe do dược sĩ GPLink duyệt, theo mùa, theo độ tuổi hoặc theo chủ đề.',
+ entry:'Ba khối nội dung sức khỏe trên trang chủ.',
+ outcome:'Đọc được bài viết và các bài cùng chủ đề.',
+ screens:'Trang chủ · Health library · Bài viết',
+ lanes:[{n:'Luồng chính'},{n:'Nhánh rẽ'}], phases:[[0,2,'Khám phá'],[3,5,'Đọc']],
+ nodes:[
+  N('h1',0,0,'start','Trang chủ — khối sức khỏe','“Seasonal health in Malaysia”, “Health guides for every age” (Seniors, Men, Women, Children — mỗi nhóm 4 chủ đề) và “Health corner” (tab Featured, Medicine safety, Chronic care, Family health).'),
+  N('h2',0,1,'step','Bấm “View all”','Có ở cả ba khối; Thư viện mở đúng tab: Seasonal health, Seniors, hoặc tab đang chọn ở Health corner.'),
+  N('h3',0,2,'screen','Health library','Các tab: Featured, Medicine safety, Chronic care, Family health, Seasonal health, Seniors, Men, Women, Children.'),
+  N('h4',0,3,'step','Chọn tab, bấm một bài','Mỗi thẻ bài có ảnh, chủ đề và thời gian đọc.'),
+  N('h5',0,4,'end','Trang bài viết','Tiêu đề, thời gian đọc, “Reviewed by a GPLink pharmacist” và lưu ý y tế (gọi 999 khi khẩn cấp) kèm nút “Talk to a pharmacist”. Nút “Back to Home”.'),
+  N('h6',1,5,'step','“More in …”','Cuối bài có tối đa 3 bài cùng chủ đề để đọc tiếp.')],
+ main:['h1','h2','h3','h4','h5'],
+ edges:[E('h1','h2','main'),E('h1','h5','branch','Bấm thẳng một bài',{fs:'l',ts:'l',x:'L',ls:1,lt:0.375}),E('h2','h3','main'),E('h3','h4','main'),E('h4','h5','main'),
+  E('h5','h6','branch','Đọc tiếp',{fs:'r',ts:'t',fo:-12,bo:20,lt:0.75}),E('h6','h5','back','Mở bài khác',{fs:'t',ts:'r',fo:-20,bo:12,lt:0.3})],
+ tips:['Đổi tab ở “Health corner” trên trang chủ rồi bấm “View all” để mở Thư viện đúng tab đó.','Nội dung bài viết là placeholder (quản lý trong CMS).']}
+];
+FLOWS.forEach((f, i) => { f.num = String(i + 1).padStart(2, '0'); });
+const LS = 'gplink_userflow_sel';
+const LET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const pad2 = n => String(n).padStart(2, '0');
+const gName = k => (GROUPS.find(g => g.k === k) || {}).n || '';
+const flowNum = id => (FLOWS.find(x => x.id === id) || {}).num || '';
+const JOURNEY = [['search','So sánh giá và tồn kho của một loại thuốc giữa các nhà thuốc.','hoặc'],['pharmacy','Vào thẳng cửa hàng của một nhà thuốc quen.','→'],['checkout','Mỗi nhà thuốc một đơn, thanh toán một lần.','→'],['tracking','Theo dõi riêng từng đơn đến khi nhận hàng.','']];
+
+class Component extends DCLogic {
+  state = {sel:null, hl:null, w:1280};
+  rootRef = React.createRef();
+  mainRef = React.createRef();
+  componentDidMount() {
+    let sel = null; try { sel = localStorage.getItem(LS); } catch (e) {}
+    if (!(sel === 'overview' || FLOWS.some(f => f.id === sel))) sel = null;
+    this._upd = () => { const de = document.documentElement; const w = (de && de.clientWidth) || window.innerWidth; if (w && Math.abs(w - this.state.w) > 2) this.setState({w}); };
+    if (window.ResizeObserver) { this._ro = new ResizeObserver(() => this._upd()); this._ro.observe(document.documentElement); }
+    window.addEventListener('resize', this._upd);
+    this.setState({sel}); this._upd();
+    this._raf = requestAnimationFrame(() => this._upd());
+  }
+  componentDidUpdate() { if (this._upd) this._upd(); }
+  componentWillUnmount() { if (this._ro) this._ro.disconnect(); window.removeEventListener('resize', this._upd); cancelAnimationFrame(this._raf); }
+  pick(id) {
+    this.setState({sel:id, hl:null});
+    try { localStorage.setItem(LS, id); } catch (e) {}
+    try { const m = this.mainRef.current; const top = this.state.w < 1180 && m ? m.getBoundingClientRect().top + window.scrollY - 8 : 0; window.scrollTo({top, left:0, behavior:'instant'}); } catch (e) {}
+  }
+  setHl(id) { if (this.state.hl !== id) this.setState({hl:id}); }
+  buildFlow(f, avail) {
+    const hl = this.state.hl, dim = this.props.dimOnHover !== false;
+    const nl = f.lanes.length;
+    const LW = Math.max(210, Math.min(290, Math.floor((avail - GUT) / nl)));
+    const NW = LW - 76, W = GUT + nl * LW;
+    const K = W > avail ? Math.max(0.62, avail / W) : 1;
+    const bounds = f.phases.slice(1).map(ph => HEAD + ph[0] * RH);
+    const rows = Math.max.apply(null, f.nodes.map(n => n.r)) + 1;
+    const H = HEAD + rows * RH + 4;
+    const P = {}, byId = {};
+    f.nodes.forEach(n => { byId[n.id] = n; const x = GUT + n.l * LW + (LW - NW) / 2, y = HEAD + n.r * RH + (RH - NH) / 2; P[n.id] = {x, y, cx:x + NW / 2, cy:y + NH / 2, l:n.l, r:n.r}; });
+    const chan = {L:GUT + (LW - NW) / 2 - 18, R:W - 14};
+    const port = (p, sd, o) => sd === 't' ? {x:p.cx + o, y:p.y} : sd === 'b' ? {x:p.cx + o, y:p.y + NH} : sd === 'l' ? {x:p.x, y:p.cy + o} : {x:p.x + NW, y:p.cy + o};
+    const V = sd => sd === 't' || sd === 'b';
+    const len = sg => Math.abs(sg[0].x - sg[1].x) + Math.abs(sg[0].y - sg[1].y);
+    const ord = {back:0, branch:1, error:2, main:3};
+    const paths = [], labels = [];
+    f.edges.slice().sort((a, b) => ord[a.ro] - ord[b.ro]).forEach((e, i) => {
+      const A = P[e.a], B = P[e.b]; if (!A || !B) return;
+      let fs = e.fs, ts = e.ts;
+      if (!fs || !ts) {
+        let d;
+        if (A.l === B.l && B.r > A.r) d = ['b', 't'];
+        else if (A.r === B.r) d = B.l > A.l ? ['r', 'l'] : ['l', 'r'];
+        else if (B.r > A.r) d = ['b', 't'];
+        else d = ['t', B.l <= A.l ? 'r' : 'l'];
+        fs = fs || d[0]; ts = ts || d[1];
+      }
+      const S = port(A, fs, e.fo || 0), T = port(B, ts, e.bo || 0);
+      let pts;
+      if (V(fs) && V(ts)) {
+        if (Math.abs(S.x - T.x) < 1) pts = [S, T];
+        else { const ym = e.y != null ? HEAD + e.y * RH : (fs === 'b' && ts === 't') ? S.y + (RH - NH) / 2 : (fs === 't' && ts === 'b') ? S.y - (RH - NH) / 2 : fs === 'b' ? Math.max(S.y, T.y) + 28 : Math.min(S.y, T.y) - 28; pts = [S, {x:S.x, y:ym}, {x:T.x, y:ym}, T]; }
+      } else if (!V(fs) && !V(ts)) {
+        if (Math.abs(S.y - T.y) < 1) pts = [S, T];
+        else { const xm = e.x != null ? (typeof e.x === 'string' ? chan[e.x] : e.x) : (fs === 'r' && ts === 'r') ? Math.max(S.x, T.x) + 18 : (fs === 'l' && ts === 'l') ? Math.min(S.x, T.x) - 18 : (S.x + T.x) / 2; pts = [S, {x:xm, y:S.y}, {x:xm, y:T.y}, T]; }
+      } else if (V(fs)) pts = [S, {x:S.x, y:T.y}, T];
+      else pts = [S, {x:T.x, y:S.y}, T];
+      const st = ES[e.ro] || ES.branch;
+      const op = dim && hl && e.a !== hl && e.b !== hl ? 0.15 : 1;
+      paths.push(React.createElement('path', {key:'p' + i, d:'M' + pts.map(p => Math.round(p.x) + ' ' + Math.round(p.y)).join(' L'), markerEnd:'url(#uf-ah-' + e.ro + ')', style:{fill:'none', stroke:st.c, strokeWidth:st.w, strokeDasharray:st.d || 'none', opacity:op, transition:'opacity .15s'}}));
+      if (e.lb) {
+        const segs = []; for (let k = 0; k < pts.length - 1; k++) segs.push([pts[k], pts[k + 1]]);
+        const si = e.ls != null ? Math.min(e.ls, segs.length - 1) : segs.length === 1 ? 0 : segs.length === 3 ? 1 : (len(segs[0]) >= len(segs[1]) ? 0 : 1);
+        const sg = segs[si], t = e.lt != null ? e.lt : 0.5;
+        let ly = sg[0].y + (sg[1].y - sg[0].y) * t + (e.ly || 0);
+        if (sg[0].x === sg[1].x && bounds.some(b => Math.abs(b - ly) < 10)) ly -= 14;
+        labels.push({text:e.lb, x:Math.round(sg[0].x + (sg[1].x - sg[0].x) * t + (e.lx || 0)), y:Math.round(ly), fg:st.lc, bd:st.c, op});
+      }
+    });
+    const defs = React.createElement('defs', {key:'defs'}, Object.keys(ES).map(k => React.createElement('marker', {key:k, id:'uf-ah-' + k, viewBox:'0 0 10 10', refX:10, refY:5, markerWidth:9, markerHeight:9, markerUnits:'userSpaceOnUse', orient:'auto'}, React.createElement('path', {d:'M0 0 L10 5 L0 10 z', style:{fill:ES[k].c}}))));
+    const svg = React.createElement('svg', {width:W, height:H, style:{position:'absolute', left:0, top:0, overflow:'visible', pointerEvents:'none'}}, [defs].concat(paths));
+    const mainIdx = {}; f.main.forEach((id, i) => { mainIdx[id] = pad2(i + 1); });
+    let li = 0; const letter = {}; f.nodes.forEach(n => { if (!mainIdx[n.id]) letter[n.id] = LET[li++]; });
+    const kickOf = n => n.t === 'goto' ? 'Sang luồng ' + flowNum(n.go) : (n.k || (TY[n.t] || TY.step).k);
+    const nodes = f.nodes.map(n => {
+      const p = P[n.id], ty = TY[n.t] || TY.step, go = n.go ? () => this.pick(n.go) : null;
+      return {id:n.id, x:Math.round(p.x), y:Math.round(p.y), w:NW, h:NH, num:mainIdx[n.id] || letter[n.id], kicker:kickOf(n) + (n.go && n.t !== 'goto' ? ' · luồng ' + flowNum(n.go) + ' →' : ''), title:n.n,
+        bg:ty.bg, fg:ty.fg, bd:ty.bd, kc:ty.kc, isBox:n.t !== 'decision' && n.t !== 'goto', isDec:n.t === 'decision', isGo:n.t === 'goto', go, cur:go ? 'pointer' : 'default',
+        hl:hl === n.id, hx:Math.round(p.x) - 6, hy:Math.round(p.y) - 6, hw:NW + 12, hh:NH + 12, enter:() => this.setHl(n.id)};
+    });
+    const row = (n, num) => ({num, kicker:kickOf(n), title:n.n, d:n.d || '', bg:hl === n.id ? 'var(--color-accent-100)' : 'transparent', enter:() => this.setHl(n.id), hasGo:!!n.go, go:n.go ? () => this.pick(n.go) : null, goLabel:'Xem luồng ' + flowNum(n.go) + ' →'});
+    const steps = f.main.map(id => row(byId[id], mainIdx[id]));
+    const branches = f.nodes.filter(n => !mainIdx[n.id]).map(n => row(n, letter[n.id]));
+    const idx = FLOWS.indexOf(f), prev = idx > 0 ? FLOWS[idx - 1] : null, next = idx < FLOWS.length - 1 ? FLOWS[idx + 1] : null;
+    const tips = (f.tips || []).map((t, i) => ({num:pad2(i + 1), text:t}));
+    return {
+      fNum:f.num, fTotal:String(FLOWS.length), fTitle:f.title, fGroup:gName(f.g), fGoal:f.goal, fEntry:f.entry, fOutcome:f.outcome, fScreens:f.screens,
+      countLabel:steps.length + ' bước chính · ' + branches.length + ' nhánh & ngoại lệ',
+      dW:W, dH:H, dK:K, dSW:Math.ceil(W * K), dSH:Math.ceil(H * K), dScaled:K < 1, edgesSvg:svg, labels, nodes, steps, branches, hasBranches:branches.length > 0,
+      lanes:f.lanes.map((ln, i) => ({x:GUT + i * LW, w:LW, h:H, label:ln.n, bg:ln.x ? 'color-mix(in srgb, var(--color-accent) 5%, transparent)' : 'transparent', fg:ln.x ? 'var(--color-accent-700)' : 'var(--color-neutral-800)'})),
+      phases:f.phases.map((ph, i) => ({y:HEAD + ph[0] * RH, w:W, gw:GUT - 14, label:ph[2], num:pad2(i + 1), rule:i === 0 ? 'none' : '2px solid var(--color-divider)'})),
+      tips, showTipsBlock:this.props.showTips !== false && tips.length > 0,
+      prevLabel:prev ? prev.num + ' · ' + prev.title : '00 · Tổng quan', goPrev:() => this.pick(prev ? prev.id : 'overview'),
+      hasNext:!!next, nextLabel:next ? next.num + ' · ' + next.title : '', goNext:next ? () => this.pick(next.id) : null
+    };
+  }
+  renderVals() {
+    const s = this.state, P = this.props;
+    const w = s.w || 1280, wide = w >= 1180;
+    const sel = s.sel || P.startFlow || 'overview';
+    const f = FLOWS.find(x => x.id === sel) || null;
+    const pad = Math.max(20, Math.min(40, w * 0.03));
+    const avail = (wide ? w - 280 : w) - pad * 2;
+    const item = (id, num, title) => { const on = sel === id || (id === 'overview' && !f); return {id, num, title, on, off:!on, pick:() => this.pick(id)}; };
+    const out = {
+      rootRef:this.rootRef, mainRef:this.mainRef, wide, narrow:!wide, sel:f ? f.id : 'overview', onSelect:e => this.pick(e.target.value),
+      navGroups:[{label:'Bắt đầu', items:[item('overview', '00', 'Tổng quan')]}].concat(GROUPS.map(g => ({label:g.n, items:FLOWS.filter(x => x.g === g.k).map(x => item(x.id, x.num, x.title))}))),
+      allItems:[{id:'overview', num:'00', title:'Tổng quan'}].concat(FLOWS.map(x => ({id:x.id, num:x.num, title:x.title}))),
+      isOverview:!f, isFlow:!!f, clearHl:() => this.setHl(null),
+      journey:JOURNEY.map(([id, cap, arrow]) => { const x = FLOWS.find(y => y.id === id); return {num:x.num, title:x.title, cap, arrow, pick:() => this.pick(id)}; }), goSearch:e => { if (e && e.preventDefault) e.preventDefault(); this.pick('search'); }, goPharmacy:e => { if (e && e.preventDefault) e.preventDefault(); this.pick('pharmacy'); },
+      cards:FLOWS.map(x => ({num:x.num, title:x.title, goal:x.goal, group:gName(x.g), meta:x.main.length + ' bước chính · ' + (x.nodes.length - x.main.length) + ' nhánh & ngoại lệ', pick:() => this.pick(x.id)})),
+      fNum:'', fTotal:'', fTitle:'', fGroup:'', fGoal:'', fEntry:'', fOutcome:'', fScreens:'', countLabel:'', dW:0, dH:0, dK:1, dSW:0, dSH:0, dScaled:false, edgesSvg:null, labels:[], nodes:[], steps:[], branches:[], hasBranches:false, lanes:[], phases:[], tips:[], showTipsBlock:false, prevLabel:'', goPrev:null, hasNext:false, nextLabel:'', goNext:null
+    };
+    if (f) Object.assign(out, this.buildFlow(f, avail));
+    return out;
+  }
+}
+</script>
+</body>
+</html>
